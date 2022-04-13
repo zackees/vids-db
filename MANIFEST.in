@@ -1,0 +1,4 @@
+include requirements.txt
+include requirements.testing.txt
+include postgress_test/index.html
+include postgress_test/preview.jpg
