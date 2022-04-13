@@ -1,3 +1,5 @@
 
 fastapi
 uvicorn[standard]
+ephemeral-postgres
+psycopg2
