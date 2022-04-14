@@ -6,7 +6,7 @@ import os
 
 # import ThreadPoolExecutor
 from concurrent.futures import ThreadPoolExecutor
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import List, Optional
 
 # import pytz
@@ -103,11 +103,19 @@ async def api_query(query: Query) -> JSONResponse:
         out.extend(vid_db().get_video_list(query.start, query.end, None, query.limit))
     else:
         for channel_name in query.channel_names:
-            data = vid_db().get_video_list(
-                query.start, query.end, channel_name, query.limit
-            )
+            data = vid_db().get_video_list(query.start, query.end, channel_name, query.limit)
             out.extend(data)
     # vid_db().update_many(query.vids)
+    return JSONResponse(VideoInfo.to_plain_list(out))
+
+
+@app.get("/feed/days/{number_of_days}")
+async def api_feed_days(number_of_days: int) -> JSONResponse:
+    """Api endpoint for adding a video"""
+    # print(query)
+    now = datetime.now()
+    start = now - timedelta(days=number_of_days)
+    out = vid_db().get_video_list(start, now)
     return JSONResponse(VideoInfo.to_plain_list(out))
 
 
