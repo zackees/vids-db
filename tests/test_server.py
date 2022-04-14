@@ -5,12 +5,12 @@ import unittest
 
 import requests
 import uvicorn
-
-# from postgress_test.app import app
-from postgress_test.version import VERSION
 from uvicorn.config import Config
 
-APP_NAME = "postgress_test.app:app"
+# from vid_db.app import app
+from vid_db.version import VERSION
+
+APP_NAME = "vid_db.app:app"
 MY_IP = "127.0.0.1"
 PORT = 4422  # Arbitrarily chosen.
 

@@ -22,4 +22,4 @@ RUN python -m pip install -e .
 # Expose the port and then launch the app.
 EXPOSE 80
 
-CMD ["uvicorn", "--host", "0.0.0.0", "--port", "80", "postgress_test.app:app"]
+CMD ["uvicorn", "--host", "0.0.0.0", "--port", "80", "vid_db.app:app"]

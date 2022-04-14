@@ -14,7 +14,7 @@ from fastapi import FastAPI, Request
 from fastapi.responses import PlainTextResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 
-from postgress_test.version import VERSION
+from vid_db.version import VERSION
 
 executor = ThreadPoolExecutor(max_workers=8)
 

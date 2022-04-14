@@ -1,5 +1,8 @@
 
 fastapi
+requests
 uvicorn[standard]
-ephemeral-postgres
-psycopg2
+keyvalue_sqlite
+pytz
+types-python-dateutil
+python-dateutil

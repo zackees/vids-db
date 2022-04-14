@@ -11,9 +11,9 @@ from setuptools import Command, find_packages, setup
 # The directory containing this file
 HERE = os.path.dirname(__file__)
 
-NAME = "postgress_test"
+NAME = "vid_db"
 DESCRIPTION = "Server to run ytclip."
-URL = "https://github.com/zackees/postgress_test"
+URL = "https://github.com/zackees/vid_db"
 EMAIL = "dont@email.me"
 AUTHOR = "Zach Vorhies"
 REQUIRES_PYTHON = ">=3.6.0"
@@ -26,9 +26,7 @@ with open(os.path.join(HERE, "README.md"), encoding="utf-8", mode="rt") as fd:
 with open(os.path.join(HERE, "requirements.txt"), encoding="utf-8", mode="rt") as fd:
     REQUIREMENTS = [line.strip() for line in fd.readlines() if line.strip()]
 
-with open(
-    os.path.join(HERE, "postgress_test", "version.py"), encoding="utf-8", mode="rt"
-) as fd:
+with open(os.path.join(HERE, "vid_db", "version.py"), encoding="utf-8", mode="rt") as fd:
     for line in fd.readlines():
         if line.startswith("VERSION"):
             VERSION = line.split("=")[1].strip().strip('"')
@@ -96,7 +94,7 @@ setup(
     install_requires=REQUIREMENTS,
     entry_points={
         "console_scripts": [
-            "postgress_test = postgress_test.cmd:main",
+            "vid_db = vid_db.cmd:main",
         ],
     },
     packages=find_packages(exclude=["tests", "*.tests", "*.tests.*", "tests.*"]),

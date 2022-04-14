@@ -1,4 +1,4 @@
 include requirements.txt
 include requirements.testing.txt
-include postgress_test/index.html
-include postgress_test/preview.jpg
+include vid_db/www/index.html
+include vid_db/www/preview.jpg
