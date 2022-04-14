@@ -26,9 +26,7 @@ class DbSqliteVideo:
     def create_table(self) -> None:
         with self.open_db_for_write() as conn:
             # Check to see if it's exists first of all.
-            check_table_stmt = (
-                f"SELECT name FROM sqlite_master WHERE type='table' AND name='{self.table_name}';"
-            )
+            check_table_stmt = f"SELECT name FROM sqlite_master WHERE type='table' AND name='{self.table_name}';"
             cursor = conn.execute(check_table_stmt)
             has_table = cursor.fetchall()
             if has_table:
@@ -55,7 +53,9 @@ class DbSqliteVideo:
         try:
             conn = sqlite3.connect(self.db_path, check_same_thread=False)
         except sqlite3.OperationalError as e:
-            raise OSError("Error while opening %s\nOriginal Error: %s" % (self.db_path, e))
+            raise OSError(
+                "Error while opening %s\nOriginal Error: %s" % (self.db_path, e)
+            )
         try:
             yield conn
         except Exception:
@@ -69,7 +69,9 @@ class DbSqliteVideo:
         try:
             conn = sqlite3.connect(self.db_path, check_same_thread=False, timeout=10)
         except sqlite3.OperationalError as e:
-            raise OSError("Error while opening %s\nOriginal Error: %s" % (self.db_path, e))
+            raise OSError(
+                "Error while opening %s\nOriginal Error: %s" % (self.db_path, e)
+            )
         try:
             yield conn
         finally:
