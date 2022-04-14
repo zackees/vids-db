@@ -11,20 +11,11 @@ from vid_db.date import parse_date_to_unix_utc
 from vid_db.video_info import VideoInfo
 
 
-def _to_path(sql_uri: str) -> str:
-    if sql_uri.startswith("sqlite:///"):
-        sql_uri = sql_uri[len("sqlite:///") :]
-    return sql_uri
-
-
-CURRENT_DB_VERSION = "1.0.6"
-
-
 class DbSqliteVideo:
     """SQLite3 context manager"""
 
     def __init__(self, db_path: str, table_name: str) -> None:
-        self.db_path = _to_path(db_path)
+        self.db_path = db_path
         folder_path = os.path.dirname(self.db_path)
         os.makedirs(folder_path, exist_ok=True)
         self.table_name = table_name.replace("-", "_")
