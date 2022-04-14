@@ -33,12 +33,12 @@ def utc_timestamp_to_utc_datetime(ts: Union[str, int, float]) -> datetime:
     return dt
 
 
-def utc_timestamp_to_local_timestring(ts):
-    dt = utc_timestamp_to_utc_datetime(ts)
-    tz = pytz.timezone(CURRENT_TIME_ZONE_STR)
-    dt = dt.astimezone(tz)
-    out = str(dt)
-    return out
+# def utc_timestamp_to_local_timestring(ts):
+#     dt = utc_timestamp_to_utc_datetime(ts)
+#     tz = pytz.timezone(CURRENT_TIME_ZONE_STR)
+#     dt = dt.astimezone(tz)
+#     out = str(dt)
+#     return out
 
 
 def parse_date_to_unix_utc(date_string: str) -> float:
