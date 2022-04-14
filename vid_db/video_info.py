@@ -4,15 +4,15 @@
 from __future__ import annotations
 
 import json
-from dataclasses import dataclass
 from datetime import datetime, timedelta
 from typing import Any, Dict, List, Optional, Set
+
+from pydantic import BaseModel
 
 from vid_db.date import iso_fmt, now_local, parse_datetime
 
 
-@dataclass
-class VideoInfo:
+class VideoInfo(BaseModel):
     """In memory reporesentation of a video article."""
 
     channel_name: str = ""
@@ -26,14 +26,11 @@ class VideoInfo:
     duration: str = ""  # units = seconds.
     description: str = ""
     img_src: str = ""
-    img_status: int = -1
-    img_width: int = -1
-    img_height: int = -1
     iframe_src: str = ""
     views: str = ""
     profile_img_src: str = ""
     subtitles_url: str = ""
-    rank: Optional[float] = None  # optional stdev rank.
+    # rank: Optional[float] = None  # optional stdev rank.
 
     def to_dict(self) -> Dict:
         """Generates a dictionary representing this class instance."""
@@ -49,17 +46,11 @@ class VideoInfo:
             "duration": self.duration,
             "description": self.description,
             "img_src": self.img_src,
-            "img_status": self.img_status,
-            "img_width": self.img_width,
-            "img_height": self.img_height,
             "iframe_src": self.iframe_src,
             "views": self.views,
             "profile_img_src": self.profile_img_src,
             "subtitles_url": self.subtitles_url,
         }
-        if self.rank is not None:
-            # parse float to two decimal places
-            out["rank"] = round(self.rank, 2)
         return out
 
     @classmethod
@@ -85,14 +76,9 @@ class VideoInfo:
             description=data["description"],
             img_src=data["img_src"],
             # img_width, img_height, status were added recently, and therefore are optional.
-            img_status=data.get("img_status", -1),
-            img_width=data.get("img_width", -1),
-            img_height=data.get("img_height", -1),
             iframe_src=data["iframe_src"],
             views=views,
             profile_img_src=data["profile_img_src"],
-            subtitles_url=data.get("subtitles_url", ""),
-            rank=data.get("rank", None),
         )
 
     @classmethod

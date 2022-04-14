@@ -2,7 +2,7 @@
 fastapi
 requests
 uvicorn[standard]
-keyvalue_sqlite
 pytz
 types-python-dateutil
 python-dateutil
+pydantic

@@ -7,8 +7,6 @@ from contextlib import contextmanager
 from datetime import datetime
 from typing import Any, Dict, List, Optional
 
-from keyvalue_sqlite import KeyValueSqlite as KeyValueDB  # type: ignore
-
 from vid_db.date import parse_date_to_unix_utc
 from vid_db.video_info import VideoInfo
 
@@ -30,14 +28,8 @@ class DbSqliteVideo:
         folder_path = os.path.dirname(self.db_path)
         os.makedirs(folder_path, exist_ok=True)
         self.table_name = table_name.replace("-", "_")
-        self.settings = KeyValueDB(self.db_path, self.table_name + "_settings")
         if self.db_path == "" or self.db_path == ":memory:":
             raise ValueError("Can not use in memory database for DbSqliteVideo")
-        db_version = self.settings.get("table_version", "0")
-        if db_version != CURRENT_DB_VERSION and db_version != "0":
-            raise OSError(f"{__file__}: no support for current database: {db_version}")
-            # db_version_mismatch = self.settings.get("table_version", "0") != CURRENT_DB_VERSION
-            # self.settings["table_version"] = CURRENT_DB_VERSION
         self.create_table()
 
     def create_table(self) -> None:
@@ -51,6 +43,7 @@ class DbSqliteVideo:
             if has_table:
                 return
         create_stmt = [
+            "PRAGMA journal_mode=wal2;",
             f"CREATE TABLE {self.table_name} (",
             "   url TEXT PRIMARY KEY UNIQUE NOT NULL,",
             "   channel_name TEXT,",
@@ -69,9 +62,7 @@ class DbSqliteVideo:
     @contextmanager
     def open_db_for_write(self):
         try:
-            conn = sqlite3.connect(
-                self.db_path, isolation_level="EXCLUSIVE", check_same_thread=False
-            )
+            conn = sqlite3.connect(self.db_path, check_same_thread=False)
         except sqlite3.OperationalError as e:
             raise OSError("Error while opening %s\nOriginal Error: %s" % (self.db_path, e))
         try:
@@ -85,9 +76,7 @@ class DbSqliteVideo:
     @contextmanager
     def open_db_for_read(self):
         try:
-            conn = sqlite3.connect(
-                self.db_path, isolation_level="EXCLUSIVE", check_same_thread=False, timeout=10
-            )
+            conn = sqlite3.connect(self.db_path, check_same_thread=False, timeout=10)
         except sqlite3.OperationalError as e:
             raise OSError("Error while opening %s\nOriginal Error: %s" % (self.db_path, e))
         try:
@@ -116,7 +105,6 @@ class DbSqliteVideo:
             json_data,
         )
         with self.open_db_for_write() as conn:
-            conn.execute("BEGIN")
             conn.execute(insert_stmt_cmd, record)
             conn.commit()
 
@@ -131,7 +119,6 @@ class DbSqliteVideo:
         select_stmt = "SELECT data FROM %s WHERE channel_name=(?)" % self.table_name
         output: List[str] = []
         with self.open_db_for_read() as conn:
-            conn.execute("BEGIN")
             cursor = conn.execute(select_stmt, (channel_name,))
             for row in cursor:
                 output.append(row[0])
@@ -140,7 +127,6 @@ class DbSqliteVideo:
     def find_video_by_url(self, url: str) -> Optional[VideoInfo]:
         select_stmt = "SELECT data FROM %s WHERE url=(?)" % self.table_name
         with self.open_db_for_read() as conn:
-            conn.execute("BEGIN")
             cursor = conn.execute(select_stmt, (url,))
             for row in cursor:
                 data: Dict = json.loads(row[0])
@@ -173,7 +159,6 @@ class DbSqliteVideo:
             )
             values = (channel_name, from_time, to_time)  # type: ignore
         with self.open_db_for_read() as conn:  # TODO: have a read-mode.
-            conn.execute("BEGIN EXCLUSIVE")
             cursor = conn.execute(select_stmt, values)
             all_rows = cursor.fetchall()
         for row in all_rows:
@@ -187,7 +172,6 @@ class DbSqliteVideo:
         select_stmt = f"SELECT data FROM {self.table_name}"
         output: List[str] = []
         with self.open_db_for_read() as conn:
-            conn.execute("BEGIN")
             cursor = conn.execute(select_stmt)
             for row in cursor:
                 output.append(row[0])
@@ -195,9 +179,8 @@ class DbSqliteVideo:
 
     def to_data(self) -> List[Any]:
         out = []
-        select_stmt = "SELECT * FROM %s" % self.table_name
+        select_stmt = f"SELECT * FROM {self.table_name}"
         with self.open_db_for_read() as conn:
-            conn.execute("BEGIN")
             cursor = conn.execute(select_stmt)
             for row in cursor:
                 values = list(row)  # Copy
