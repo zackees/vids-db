@@ -19,6 +19,10 @@ from vid_db.version import VERSION
 executor = ThreadPoolExecutor(max_workers=8)
 
 HERE = os.path.dirname(__file__)
+PROJECT_ROOT = os.path.dirname(HERE)
+DATA = os.path.join(PROJECT_ROOT, "data")
+
+os.makedirs(DATA, exist_ok=True)
 
 app = FastAPI()
 
@@ -70,4 +74,11 @@ async def favicon() -> RedirectResponse:
 @app.get("/version")
 async def api_version() -> PlainTextResponse:
     """Api endpoint for getting the version."""
+    return PlainTextResponse(VERSION)
+
+
+@app.get("/query")
+async def api_query(request: Request) -> PlainTextResponse:
+    """Api endpoint for getting the version."""
+    print(request)
     return PlainTextResponse(VERSION)

@@ -7,6 +7,7 @@ __pycache__/
 *.so
 
 app/temp/*
+data/
 
 activate.sh
 
