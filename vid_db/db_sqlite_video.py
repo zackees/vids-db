@@ -108,7 +108,7 @@ class DbSqliteVideo:
         self._insert_or_replace(vid_in)
 
     def find_videos_by_channel_name(self, channel_name: str) -> List[VideoInfo]:
-        select_stmt = "SELECT data FROM %s WHERE channel_name=(?)" % self.table_name
+        select_stmt = f"SELECT data FROM {self.table_name} WHERE channel_name=(?)"
         output: List[str] = []
         with self.open_db_for_read() as conn:
             cursor = conn.execute(select_stmt, (channel_name,))
@@ -117,7 +117,7 @@ class DbSqliteVideo:
         return [VideoInfo.from_dict(json.loads(s)) for s in output]
 
     def find_video_by_url(self, url: str) -> Optional[VideoInfo]:
-        select_stmt = "SELECT data FROM %s WHERE url=(?)" % self.table_name
+        select_stmt = f"SELECT data FROM {self.table_name} WHERE url=(?)"
         with self.open_db_for_read() as conn:
             cursor = conn.execute(select_stmt, (url,))
             for row in cursor:
@@ -141,7 +141,10 @@ class DbSqliteVideo:
         else:
             limit_clause = ""
         if channel_name is None:
-            select_stmt = f"SELECT data FROM {self.table_name} WHERE timestamp_published BETWEEN ? AND ? ORDER BY timestamp_published DESC {limit_clause};"
+            select_stmt = (
+                f"SELECT data FROM {self.table_name} WHERE timestamp_published BETWEEN ? AND ?"
+                f" ORDER BY timestamp_published DESC {limit_clause};"
+            )
             values = (from_time, to_time)  # type: ignore
         else:
             select_stmt = (

@@ -1,4 +1,4 @@
-"""ytclip-server command line tool."""
+"""vid_db command line tool."""
 
 import os
 import sys

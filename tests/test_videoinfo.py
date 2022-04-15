@@ -1,9 +1,4 @@
 import unittest
-from datetime import datetime
-from typing import List
-
-from vid_db.date import now_local, parse_datetime
-from vid_db.video_info import VideoInfo
 
 
 class VideoInfoTester(unittest.TestCase):

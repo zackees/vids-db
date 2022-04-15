@@ -101,24 +101,24 @@ async def api_query(query: Query) -> JSONResponse:
     return JSONResponse(VideoInfo.to_plain_list(out))
 
 
-@app.get("/feed/days/{number_of_hours}")
-async def api_feed_days(number_of_hours: int) -> JSONResponse:
+@app.get("/feed/hours/{number_of_hours}", response_model=List[VideoInfo])
+async def api_feed_hours(number_of_hours: int):
     """Api endpoint for adding a video"""
     # print(query)
     now = datetime.now()
     start = now - timedelta(hours=number_of_hours)
     out = VID_DB.get_video_list(start, now)
-    return JSONResponse(VideoInfo.to_plain_list(out))
+    return out
 
 
-@app.put("/update/video")
+@app.put("/put/video")
 async def api_add_video(video: VideoInfo) -> JSONResponse:
     """Api endpoint for adding a snapshot."""
     VID_DB.update(video)
     return JSONResponse({"ok": True})
 
 
-@app.put("/update/videos")
+@app.put("/put/videos")
 async def api_add_videos(videos: List[VideoInfo]) -> JSONResponse:
     """Api endpoint for adding a snapshot."""
     VID_DB.update_many(videos)
