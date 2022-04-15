@@ -27,18 +27,10 @@ HERE = os.path.dirname(__file__)
 PROJECT_ROOT = os.path.dirname(HERE)
 DATA = os.path.join(PROJECT_ROOT, "data")
 os.makedirs(DATA, exist_ok=True)
-VID_DB_FILE = os.path.join(DATA, "vid_db.sqlite")
+DEFAULT_VID_DB_FILE = os.path.join(DATA, "vid_db.sqlite")
+VID_DB_FILE = os.environ.get("VID_DB_FILE", DEFAULT_VID_DB_FILE)
 
-VID_DB = None
-
-
-def vid_db() -> Database:
-    """Returns the video database."""
-    global VID_DB  # pylint: disable=global-statement
-    if VID_DB is None:
-        VID_DB = Database(VID_DB_FILE)
-    return VID_DB
-
+VID_DB = Database(VID_DB_FILE)
 
 app = FastAPI()
 
@@ -100,34 +92,34 @@ async def api_query(query: Query) -> JSONResponse:
     out: List[VideoInfo] = []
     if query.channel_names is None:
         query.channel_names = []
-        out.extend(vid_db().get_video_list(query.start, query.end, None, query.limit))
+        out.extend(VID_DB.get_video_list(query.start, query.end, None, query.limit))
     else:
         for channel_name in query.channel_names:
-            data = vid_db().get_video_list(query.start, query.end, channel_name, query.limit)
+            data = VID_DB.get_video_list(query.start, query.end, channel_name, query.limit)
             out.extend(data)
     # vid_db().update_many(query.vids)
     return JSONResponse(VideoInfo.to_plain_list(out))
 
 
-@app.get("/feed/days/{number_of_days}")
-async def api_feed_days(number_of_days: int) -> JSONResponse:
+@app.get("/feed/days/{number_of_hours}")
+async def api_feed_days(number_of_hours: int) -> JSONResponse:
     """Api endpoint for adding a video"""
     # print(query)
     now = datetime.now()
-    start = now - timedelta(days=number_of_days)
-    out = vid_db().get_video_list(start, now)
+    start = now - timedelta(hours=number_of_hours)
+    out = VID_DB.get_video_list(start, now)
     return JSONResponse(VideoInfo.to_plain_list(out))
 
 
 @app.put("/update/video")
 async def api_add_video(video: VideoInfo) -> JSONResponse:
     """Api endpoint for adding a snapshot."""
-    vid_db().update(video)
+    VID_DB.update(video)
     return JSONResponse({"ok": True})
 
 
 @app.put("/update/videos")
 async def api_add_videos(videos: List[VideoInfo]) -> JSONResponse:
     """Api endpoint for adding a snapshot."""
-    vid_db().update_many(videos)
+    VID_DB.update_many(videos)
     return JSONResponse({"ok": True})

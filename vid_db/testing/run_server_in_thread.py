@@ -31,9 +31,8 @@ def run_server_in_thread():
     Useful for testing, this function brings up a server.
     It's a context manager so that it can be used in a with statement.
     """
-    server = ServerWithShutdown(
-        config=Config(APP_NAME, host=HOST, port=PORT, log_level="info", use_colors=False)
-    )
+    config = Config(APP_NAME, host=HOST, port=PORT, log_level="info", use_colors=False)
+    server = ServerWithShutdown(config=config)
     thread = threading.Thread(target=server.run, daemon=True)
     thread.start()
     try:

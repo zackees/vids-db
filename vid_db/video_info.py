@@ -15,21 +15,19 @@ from vid_db.date import iso_fmt, now_local, parse_datetime
 class VideoInfo(BaseModel):
     """In memory reporesentation of a video article."""
 
-    channel_name: str = ""
-    title: str = ""
-    date_published: str = ""  # from the scraped website
-    date_discovered: str = ""  # generated during scrape
-    date_lastupdated: str = ""
-    channel_url: str = ""
-    source: str = ""
-    url: str = ""
-    duration: str = ""  # units = seconds.
-    description: str = ""
-    img_src: str = ""
-    iframe_src: str = ""
-    views: str = ""
-    profile_img_src: str = ""
-    subtitles_url: str = ""
+    channel_name: str
+    title: str
+    date_published: datetime  # from the scraped website
+    date_discovered: datetime  # generated during scrape
+    date_lastupdated: datetime
+    channel_url: str
+    source: str
+    url: str
+    duration: str  # units = seconds.
+    description: str
+    img_src: str
+    iframe_src: str
+    views: int
     # rank: Optional[float] = None  # optional stdev rank.
 
     def to_dict(self) -> Dict:
@@ -37,9 +35,9 @@ class VideoInfo(BaseModel):
         out = {
             "channel_name": self.channel_name,
             "title": self.title,
-            "date_published": self.date_published,
-            "date_discovered": self.date_discovered,
-            "date_lastupdated": self.date_lastupdated,
+            "date_published": iso_fmt(self.date_published),
+            "date_discovered": iso_fmt(self.date_discovered),
+            "date_lastupdated": iso_fmt(self.date_lastupdated),
             "channel_url": self.channel_url,
             "source": self.source,
             "url": self.url,
@@ -48,8 +46,6 @@ class VideoInfo(BaseModel):
             "img_src": self.img_src,
             "iframe_src": self.iframe_src,
             "views": self.views,
-            "profile_img_src": self.profile_img_src,
-            "subtitles_url": self.subtitles_url,
         }
         return out
 
@@ -63,12 +59,13 @@ class VideoInfo(BaseModel):
     def from_dict(cls, data: Dict) -> VideoInfo:
         """Deserializes from dictionary back to VideoInfo"""
         views = _parse_views(data["views"])
+
         return VideoInfo(
             channel_name=data["channel_name"],
             title=data["title"],
-            date_published=iso_fmt(data["date_published"]),
-            date_discovered=iso_fmt(data["date_discovered"]),
-            date_lastupdated=iso_fmt(data["date_lastupdated"]),
+            date_published=parse_datetime(data["date_published"]),
+            date_discovered=parse_datetime(data["date_discovered"]),
+            date_lastupdated=parse_datetime(data["date_lastupdated"]),
             channel_url=data["channel_url"],
             source=data["source"],
             url=data["url"],
@@ -78,7 +75,6 @@ class VideoInfo(BaseModel):
             # img_width, img_height, status were added recently, and therefore are optional.
             iframe_src=data["iframe_src"],
             views=views,
-            profile_img_src=data["profile_img_src"],
         )
 
     @classmethod
@@ -126,28 +122,6 @@ class VideoInfo(BaseModel):
                 val = vid_dict.get(col, "")
                 row.append(val)
             out.append(row)
-        return out
-
-    @classmethod
-    def from_compact_csv(cls, csv_list: List[List]) -> List[VideoInfo]:
-        """
-        Generates a compact csv form of the data. The csv form consists of a header list, followed by N data
-        lists. This has the advantage of eliminating the redundant keys in the dictionary form, which helps
-        reduce the size of the file over the wire.
-        """
-        if len(csv_list) == 0:
-            return []
-        # Header line is the key list
-        key_list: List = [e.strip() for e in csv_list[0]]
-        out: List[VideoInfo] = []
-        # Go through the rest of the list and and construct the data, using the key_list
-        # as the schema to build out the output list of VideoInfo.
-        for datum in csv_list[1:]:
-            vi: VideoInfo = VideoInfo()
-            d = vi.to_dict()
-            for i, key in enumerate(key_list):
-                d[key] = datum[i]
-            out.append(VideoInfo.from_dict(d))
         return out
 
     def video_age_seconds(self, now_time: Optional[datetime] = None) -> float:

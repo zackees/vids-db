@@ -7,7 +7,6 @@ from contextlib import contextmanager
 from datetime import datetime
 from typing import Any, Dict, List, Optional
 
-from vid_db.date import parse_date_to_unix_utc
 from vid_db.video_info import VideoInfo
 
 
@@ -26,7 +25,9 @@ class DbSqliteVideo:
     def create_table(self) -> None:
         with self.open_db_for_write() as conn:
             # Check to see if it's exists first of all.
-            check_table_stmt = f"SELECT name FROM sqlite_master WHERE type='table' AND name='{self.table_name}';"
+            check_table_stmt = (
+                f"SELECT name FROM sqlite_master WHERE type='table' AND name='{self.table_name}';"
+            )
             cursor = conn.execute(check_table_stmt)
             has_table = cursor.fetchall()
             if has_table:
@@ -53,9 +54,7 @@ class DbSqliteVideo:
         try:
             conn = sqlite3.connect(self.db_path, check_same_thread=False)
         except sqlite3.OperationalError as e:
-            raise OSError(
-                "Error while opening %s\nOriginal Error: %s" % (self.db_path, e)
-            )
+            raise OSError("Error while opening %s\nOriginal Error: %s" % (self.db_path, e))
         try:
             yield conn
         except Exception:
@@ -69,9 +68,7 @@ class DbSqliteVideo:
         try:
             conn = sqlite3.connect(self.db_path, check_same_thread=False, timeout=10)
         except sqlite3.OperationalError as e:
-            raise OSError(
-                "Error while opening %s\nOriginal Error: %s" % (self.db_path, e)
-            )
+            raise OSError("Error while opening %s\nOriginal Error: %s" % (self.db_path, e))
         try:
             yield conn
         finally:
@@ -80,7 +77,8 @@ class DbSqliteVideo:
     def _insert_or_replace(self, video_info: VideoInfo) -> None:
         channel_name = video_info.channel_name
         url = video_info.url
-        timestamp_published = int(parse_date_to_unix_utc(video_info.date_published))
+        # Convert datetime to unix timestamp
+        timestamp_published = int(video_info.date_published.timestamp())
         insert_stmt = [
             f"INSERT OR REPLACE INTO {self.table_name} (",
             "    url,",
@@ -90,7 +88,8 @@ class DbSqliteVideo:
             ") VALUES (?, ?, ?, ?)",
         ]
         insert_stmt_cmd = "\n".join(insert_stmt)
-        json_data = json.dumps(video_info.to_dict(), ensure_ascii=False)
+        data = video_info.to_dict()
+        json_data = json.dumps(data, ensure_ascii=False)
         record = (
             url,
             channel_name,
