@@ -101,7 +101,7 @@ async def api_query(query: Query) -> JSONResponse:
     return JSONResponse(VideoInfo.to_plain_list(out))
 
 
-@app.get("/feed/hours/{number_of_hours}", response_model=List[VideoInfo])
+@app.get("/feed/json/hours/{number_of_hours}", response_model=List[VideoInfo])
 async def api_feed_hours(number_of_hours: int):
     """Api endpoint for adding a video"""
     # print(query)

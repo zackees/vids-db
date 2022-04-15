@@ -59,7 +59,7 @@ class ApiServerTester(unittest.TestCase):
             vid = make_vid("test_channel", "test_title")
             r = requests.put(f"{URL}/put/video", json=vid.to_dict())
             r.raise_for_status()
-            r = requests.get(f"{URL}/feed/hours/1")
+            r = requests.get(f"{URL}/feed/json/hours/1")
             r.raise_for_status()
             data = r.json()
             self.assertEqual(1, len(data))
