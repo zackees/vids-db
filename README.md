@@ -1,6 +1,6 @@
 # vid_db
 
-Docker http server running [ytclip](https://github.com/zackees/ytclip)
+Server for storing video information.
 
 # Demo
 
