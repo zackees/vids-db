@@ -23,6 +23,7 @@ os.environ.update({"VID_DB_FILE": TEST_DB})
 
 
 def make_vid(channel_name: str, title: str) -> VideoInfo:
+    """Generates a video with default values."""
     return VideoInfo(
         channel_name=channel_name,
         title=title,

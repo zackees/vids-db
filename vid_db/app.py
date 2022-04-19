@@ -3,15 +3,17 @@
     api is located at /clip
 """
 import os
-
-# import ThreadPoolExecutor
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timedelta
 from typing import List, Optional
 
-# import pytz
 from fastapi import FastAPI
-from fastapi.responses import JSONResponse, PlainTextResponse, RedirectResponse
+from fastapi.responses import (
+    JSONResponse,
+    PlainTextResponse,
+    RedirectResponse,
+    Response,
+)
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel  # pylint: disable=no-name-in-module
 
@@ -20,6 +22,13 @@ from vid_db.database import Database  # type: ignore
 # from vid_db.database import Database
 from vid_db.version import VERSION
 from vid_db.video_info import VideoInfo
+
+
+class RssResponse(Response):  # pylint: disable=too-few-public-methods
+    """Returns an RSS response from a query."""
+
+    media_type = "application/rss+xml"
+
 
 executor = ThreadPoolExecutor(max_workers=8)
 
@@ -43,6 +52,14 @@ class Query(BaseModel):  # pylint: disable=too-few-public-methods
     start: datetime
     end: datetime
     channel_names: Optional[List[str]] = None
+    limit: int = -1
+
+
+class RssQuery(BaseModel):  # pylint: disable=too-few-public-methods
+    """Query structure."""
+
+    channel_name: str
+    days: int = 7
     limit: int = -1
 
 
@@ -109,6 +126,19 @@ async def api_feed_hours(number_of_hours: int):
     start = now - timedelta(hours=number_of_hours)
     out = VID_DB.get_video_list(start, now)
     return out
+
+
+@app.post("/rss/", response_model=List[VideoInfo])
+async def api_channel_rss_feed(query: RssQuery) -> RssResponse:
+    """Api endpoint for adding a video"""
+    # print(query)
+    now = datetime.now()
+    start = now - timedelta(days=query.days)
+    kwargs = {}
+    if query.limit > 0:
+        kwargs["limit"] = query.limit
+    out = VID_DB.get_video_list(start, now, query.channel_name, **kwargs)
+    return RssResponse(VideoInfo.to_rss(out))
 
 
 @app.put("/put/video")
