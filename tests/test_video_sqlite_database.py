@@ -1,6 +1,7 @@
 import os
 import tempfile
 import unittest
+from asyncio.constants import DEBUG_STACK_DEPTH
 from datetime import datetime, timedelta
 from typing import List
 
@@ -89,6 +90,15 @@ class DbSqliteVideoTester(unittest.TestCase):
         db.insert_or_update(video_in)
         vid = db.find_video_by_url(video_in.url)
         self.assertEqual(vid, video_in)
+
+    def test_find_vides_by_urls(self):
+        """Tests that two videos can be found by url."""
+        db_path = self.create_tempfile_path()
+        db = DbSqliteVideo(db_path, "table-name")
+        db.insert_or_update(test_video_info(url="a"))
+        db.insert_or_update(test_video_info(url="b"))
+        vids = db.find_videos_by_urls(["a", "b"])
+        self.assertEqual(2, len(vids))
 
     def test_find_video_by_date(self):
         """Tests that a video can be found by date."""

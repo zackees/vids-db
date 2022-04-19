@@ -52,7 +52,7 @@ class DbSqliteVideo:
     @contextmanager
     def open_db_for_write(self):
         try:
-            conn = sqlite3.connect(self.db_path, check_same_thread=False)
+            conn = sqlite3.connect(self.db_path, check_same_thread=False, timeout=10)
         except sqlite3.OperationalError as e:
             raise OSError("Error while opening %s\nOriginal Error: %s" % (self.db_path, e))
         try:
@@ -116,15 +116,22 @@ class DbSqliteVideo:
                 output.append(row[0])
         return [VideoInfo.from_dict(json.loads(s)) for s in output]
 
-    def find_video_by_url(self, url: str) -> Optional[VideoInfo]:
+    def find_videos_by_urls(self, urls: List[str]) -> List[VideoInfo]:
+        outlist: List[VideoInfo] = []
         select_stmt = f"SELECT data FROM {self.table_name} WHERE url=(?)"
         with self.open_db_for_read() as conn:
-            cursor = conn.execute(select_stmt, (url,))
-            for row in cursor:
-                data: Dict = json.loads(row[0])
-                out: VideoInfo = VideoInfo.from_dict(data)
-                return out
-        return None
+            for url in urls:
+                cursor = conn.execute(select_stmt, (url,))
+                for row in cursor:
+                    data: Dict = json.loads(row[0])
+                    out: VideoInfo = VideoInfo.from_dict(data)
+                    outlist.append(out)
+                    break
+        return outlist
+
+    def find_video_by_url(self, url: str) -> Optional[VideoInfo]:
+        vids = self.find_videos_by_urls([url])
+        return vids[0] if vids else None
 
     def find_videos(
         self,
