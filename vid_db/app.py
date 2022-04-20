@@ -18,6 +18,7 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel  # pylint: disable=no-name-in-module
 
 from vid_db.database import Database  # type: ignore
+from vid_db.rss import to_rss
 
 # from vid_db.database import Database
 from vid_db.version import VERSION
@@ -112,7 +113,9 @@ async def api_query(query: Query) -> JSONResponse:
         out.extend(VID_DB.get_video_list(query.start, query.end, None, query.limit))
     else:
         for channel_name in query.channel_names:
-            data = VID_DB.get_video_list(query.start, query.end, channel_name, query.limit)
+            data = VID_DB.get_video_list(
+                query.start, query.end, channel_name, query.limit
+            )
             out.extend(data)
     # vid_db().update_many(query.vids)
     return JSONResponse(VideoInfo.to_plain_list(out))
@@ -138,7 +141,7 @@ async def api_channel_rss_feed(query: RssQuery) -> RssResponse:
     if query.limit > 0:
         kwargs["limit"] = query.limit
     out = VID_DB.get_video_list(start, now, query.channel_name, **kwargs)
-    return RssResponse(VideoInfo.to_rss(out))
+    return RssResponse(to_rss(out))
 
 
 @app.put("/put/video")

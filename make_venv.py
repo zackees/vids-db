@@ -64,4 +64,6 @@ if not os.path.exists("venv"):
 else:
     print("%s already exists" % os.path.abspath("venv"))
 
-print('Now use ". activate.sh" (at the project root dir) to enter into the environment.')
+print(
+    'Now use ". activate.sh" (at the project root dir) to enter into the environment.'
+)

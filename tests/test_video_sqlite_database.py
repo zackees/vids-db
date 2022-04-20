@@ -63,7 +63,9 @@ class DbSqliteVideoTester(unittest.TestCase):
         db.insert_or_update(video_in)
         video_in.url = "vid_url1.html"
         db.insert_or_update(video_in)
-        videos: List[VideoInfo] = db.find_videos_by_channel_name(channel_name="XXchannel_name")
+        videos: List[VideoInfo] = db.find_videos_by_channel_name(
+            channel_name="XXchannel_name"
+        )
         self.assertEqual(2, len(videos))
 
     def test_add_update_video_info(self):
@@ -122,7 +124,9 @@ class DbSqliteVideoTester(unittest.TestCase):
         db.insert_or_update(video_1)
         date_start: datetime = video_0.date_published
         date_end: datetime = date_start + timedelta(seconds=1)
-        found_vids: List[VideoInfo] = db.find_videos(date_start, date_end, limit_count=1)
+        found_vids: List[VideoInfo] = db.find_videos(
+            date_start, date_end, limit_count=1
+        )
         self.assertEqual(1, len(found_vids))
 
 
