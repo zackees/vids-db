@@ -6,3 +6,4 @@ pytz
 types-python-dateutil
 python-dateutil
 pydantic
+feedparser
