@@ -18,7 +18,6 @@ class VideoInfo(BaseModel):
     channel_name: str
     title: str
     date_published: datetime  # from the scraped website
-    date_discovered: datetime  # generated during scrape
     date_lastupdated: datetime
     channel_url: str
     source: str
@@ -36,7 +35,6 @@ class VideoInfo(BaseModel):
             "channel_name": self.channel_name,
             "title": self.title,
             "date_published": iso_fmt(self.date_published),
-            "date_discovered": iso_fmt(self.date_discovered),
             "date_lastupdated": iso_fmt(self.date_lastupdated),
             "channel_url": self.channel_url,
             "source": self.source,
@@ -64,7 +62,6 @@ class VideoInfo(BaseModel):
             channel_name=data["channel_name"],
             title=data["title"],
             date_published=parse_datetime(data["date_published"]),
-            date_discovered=parse_datetime(data["date_discovered"]),
             date_lastupdated=parse_datetime(data["date_lastupdated"]),
             channel_url=data["channel_url"],
             source=data["source"],

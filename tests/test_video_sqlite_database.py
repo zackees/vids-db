@@ -16,7 +16,6 @@ def test_video_info(url: str = "vid_url0.html") -> VideoInfo:
             "channel_name": "XXchannel_name",
             "channel_url": "chann_url0.html",
             "date_published": "2021-02-09 15:22:46.162038-08:00",
-            "date_discovered": "2021-02-09 15:22:46.162038-08:00",
             "date_lastupdated": "2021-02-09 15:22:46.162038-08:00",
             "duration": "60",
             "description": "",
@@ -62,9 +61,7 @@ class DbSqliteVideoTester(unittest.TestCase):
         db.insert_or_update(video_in)
         video_in.url = "vid_url1.html"
         db.insert_or_update(video_in)
-        videos: List[VideoInfo] = db.find_videos_by_channel_name(
-            channel_name="XXchannel_name"
-        )
+        videos: List[VideoInfo] = db.find_videos_by_channel_name(channel_name="XXchannel_name")
         self.assertEqual(2, len(videos))
 
     def test_add_update_video_info(self):
@@ -72,15 +69,12 @@ class DbSqliteVideoTester(unittest.TestCase):
         db_path = self.create_tempfile_path()
         db = DbSqliteVideo(db_path, "table-name")
         video_in: VideoInfo = test_video_info()
-        video_in.date_discovered = "2021-02-09T15:00:00.000000-08:00"
         video_in.views = "555"
         db.insert_or_update(video_in)
         # Add the same value one hour later
-        video_in.date_discovered = "2021-02-09T16:00:00.000000-08:00"
         video_in.views = "1000"
         db.insert_or_update(video_in)
         vid_out: VideoInfo = db.find_video_by_url(video_in.url)  # type: ignore
-        self.assertEqual(iso_fmt(vid_out.date_discovered), "2021-02-09T15:00:00-08:00")
         self.assertEqual(vid_out.views, 1000)
 
     def test_find_video_by_url(self):
@@ -123,9 +117,7 @@ class DbSqliteVideoTester(unittest.TestCase):
         db.insert_or_update(video_1)
         date_start: datetime = video_0.date_published
         date_end: datetime = date_start + timedelta(seconds=1)
-        found_vids: List[VideoInfo] = db.find_videos(
-            date_start, date_end, limit_count=1
-        )
+        found_vids: List[VideoInfo] = db.find_videos(date_start, date_end, limit_count=1)
         self.assertEqual(1, len(found_vids))
 
 

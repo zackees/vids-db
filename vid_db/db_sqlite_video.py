@@ -25,7 +25,9 @@ class DbSqliteVideo:
     def create_table(self) -> None:
         with self.open_db_for_write() as conn:
             # Check to see if it's exists first of all.
-            check_table_stmt = f"SELECT name FROM sqlite_master WHERE type='table' AND name='{self.table_name}';"
+            check_table_stmt = (
+                f"SELECT name FROM sqlite_master WHERE type='table' AND name='{self.table_name}';"
+            )
             cursor = conn.execute(check_table_stmt)
             has_table = cursor.fetchall()
             if has_table:
@@ -52,9 +54,7 @@ class DbSqliteVideo:
         try:
             conn = sqlite3.connect(self.db_path, check_same_thread=False, timeout=10)
         except sqlite3.OperationalError as e:
-            raise OSError(
-                "Error while opening %s\nOriginal Error: %s" % (self.db_path, e)
-            )
+            raise OSError("Error while opening %s\nOriginal Error: %s" % (self.db_path, e))
         try:
             yield conn
         except Exception:
@@ -68,15 +68,13 @@ class DbSqliteVideo:
         try:
             conn = sqlite3.connect(self.db_path, check_same_thread=False, timeout=10)
         except sqlite3.OperationalError as e:
-            raise OSError(
-                "Error while opening %s\nOriginal Error: %s" % (self.db_path, e)
-            )
+            raise OSError("Error while opening %s\nOriginal Error: %s" % (self.db_path, e))
         try:
             yield conn
         finally:
             conn.close()
 
-    def _insert_or_replace(self, video_info: VideoInfo) -> None:
+    def insert_or_update(self, video_info: VideoInfo) -> None:
         channel_name = video_info.channel_name
         url = video_info.url
         # Convert datetime to unix timestamp
@@ -101,13 +99,6 @@ class DbSqliteVideo:
         with self.open_db_for_write() as conn:
             conn.execute(insert_stmt_cmd, record)
             conn.commit()
-
-    def insert_or_update(self, vid_in: VideoInfo) -> None:
-        vid: Optional[VideoInfo]
-        vid = self.find_video_by_url(vid_in.url)
-        if vid:
-            vid_in.date_discovered = vid.date_discovered
-        self._insert_or_replace(vid_in)
 
     def find_videos_by_channel_name(self, channel_name: str) -> List[VideoInfo]:
         select_stmt = f"SELECT data FROM {self.table_name} WHERE channel_name=(?)"

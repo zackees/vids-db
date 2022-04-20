@@ -8,6 +8,7 @@ from datetime import datetime, timedelta
 from typing import List, Optional
 
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import (
     JSONResponse,
     PlainTextResponse,
@@ -24,13 +25,6 @@ from vid_db.rss import to_rss
 from vid_db.version import VERSION
 from vid_db.video_info import VideoInfo
 
-
-class RssResponse(Response):  # pylint: disable=too-few-public-methods
-    """Returns an RSS response from a query."""
-
-    media_type = "application/rss+xml"
-
-
 executor = ThreadPoolExecutor(max_workers=8)
 
 HERE = os.path.dirname(__file__)
@@ -44,7 +38,21 @@ VID_DB = Database(VID_DB_FILE)
 
 app = FastAPI()
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+    allow_credentials=True,
+)
+
 STARTUP_DATETIME = datetime.now()
+
+
+class RssResponse(Response):  # pylint: disable=too-few-public-methods
+    """Returns an RSS response from a query."""
+
+    media_type = "application/rss+xml"
 
 
 class Query(BaseModel):  # pylint: disable=too-few-public-methods
@@ -106,41 +114,36 @@ async def api_version() -> PlainTextResponse:
 @app.post("/query")
 async def api_query(query: Query) -> JSONResponse:
     """Api endpoint for adding a video"""
-    # print(query)
     out: List[VideoInfo] = []
     if query.channel_names is None:
         query.channel_names = []
         out.extend(VID_DB.get_video_list(query.start, query.end, None, query.limit))
     else:
         for channel_name in query.channel_names:
-            data = VID_DB.get_video_list(
-                query.start, query.end, channel_name, query.limit
-            )
+            data = VID_DB.get_video_list(query.start, query.end, channel_name, query.limit)
             out.extend(data)
-    # vid_db().update_many(query.vids)
     return JSONResponse(VideoInfo.to_plain_list(out))
 
 
-@app.get("/feed/json/hours/{number_of_hours}", response_model=List[VideoInfo])
-async def api_feed_hours(number_of_hours: int):
-    """Api endpoint for adding a video"""
-    # print(query)
-    now = datetime.now()
-    start = now - timedelta(hours=number_of_hours)
-    out = VID_DB.get_video_list(start, now)
-    return out
-
-
 @app.post("/rss/", response_model=List[VideoInfo])
-async def api_channel_rss_feed(query: RssQuery) -> RssResponse:
+async def api_rss_channel_feed(query: RssQuery) -> RssResponse:
     """Api endpoint for adding a video"""
-    # print(query)
     now = datetime.now()
     start = now - timedelta(days=query.days)
     kwargs = {}
     if query.limit > 0:
         kwargs["limit"] = query.limit
     out = VID_DB.get_video_list(start, now, query.channel_name, **kwargs)
+    return RssResponse(to_rss(out))
+
+
+@app.get("/rss/all", response_model=List[VideoInfo])
+async def api_rss_all_feed(hours_ago: int) -> RssResponse:
+    """Api endpoint for adding a video"""
+    now = datetime.now()
+    hours_ago = min(hours_ago, 48)
+    start = now - timedelta(hours=hours_ago)
+    out = VID_DB.get_video_list(start, now)
     return RssResponse(to_rss(out))
 
 

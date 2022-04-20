@@ -2,7 +2,9 @@
     Generates an rss stream from a list of VideoInfo object.
 """
 
-from typing import Dict, List
+from typing import List
+
+import feedparser  # type: ignore
 
 from vid_db.date import iso_fmt
 from vid_db.video_info import VideoInfo
@@ -11,24 +13,24 @@ from vid_db.video_info import VideoInfo
 def _rss_item(vid_info: VideoInfo) -> str:
     views = "0" if vid_info.views == "?" else vid_info.views
     return f"""
-  <item>
-    <title>{vid_info.title}</title>
-    <published>{iso_fmt(vid_info.date_published)}</published>
-    <lastupdated>{iso_fmt(vid_info.date_lastupdated)}</lastupdated>
-    <url>{vid_info.url}</url>
-    <channel_url>{vid_info.channel_url}</channel_url>
-    <channel_name>{vid_info.channel_name}</channel_name>
-    <description>{vid_info.description}</description>
-    <image>{vid_info.img_src}</image>
-    <duration>{vid_info.duration}</duration>
-    <views>{views}</views>
-    <host>{vid_info.source}</host>
-    <iframe>{vid_info.iframe_src}</iframe>
-  </item>
+    <item>
+      <title>{vid_info.title}</title>
+      <published>{iso_fmt(vid_info.date_published)}</published>
+      <lastupdated>{iso_fmt(vid_info.date_lastupdated)}</lastupdated>
+      <url>{vid_info.url}</url>
+      <channel_url>{vid_info.channel_url}</channel_url>
+      <channel_name>{vid_info.channel_name}</channel_name>
+      <description>{vid_info.description}</description>
+      <thumbnail>{vid_info.img_src}</thumbnail>
+      <duration>{vid_info.duration}</duration>
+      <views>{views}</views>
+      <host>{vid_info.source}</host>
+      <iframe>{vid_info.iframe_src}</iframe>
+    </item>
 """
 
 
-def to_rss(data: List[VideoInfo]) -> str:
+def to_rss(vid_list: List[VideoInfo]) -> str:
     """
     Returns a list of RSS items as a string.
     """
@@ -36,12 +38,36 @@ def to_rss(data: List[VideoInfo]) -> str:
 <?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0">
 """
-    channel_videos: Dict[str, List[VideoInfo]] = {}
-    for vid_info in data:
-        channel_videos.setdefault(vid_info.channel_name, []).append(vid_info)
-    for channel_name, videos in channel_videos.items():
-        out += f"  <channel><title>{channel_name}</title>"
-        for vid_info in videos:
-            out += _rss_item(vid_info)
-        out += "  </channel>"
+    out += "  <channel>\n"
+    out += "    <title>AllVids</title>"
+    for video in vid_list:
+        out += _rss_item(video)
+    out += "  </channel>\n"
+    out += "</rss>"
+    return out
+
+
+def from_rss(rss_str: str) -> List[VideoInfo]:
+    """
+    Returns a list of VideoInfo objects from an RSS stream.
+    """
+    out: List[VideoInfo] = []
+    parsed = feedparser.parse(rss_str)
+    for entry in parsed.entries:
+        out.append(
+            VideoInfo(
+                channel_name=entry.channel_name,
+                title=entry.title,
+                date_published=iso_fmt(entry.published),
+                date_lastupdated=iso_fmt(entry.lastupdated),
+                channel_url=entry.channel_url,
+                source=entry.host,
+                url=entry.url,
+                img_src=entry.thumbnail,
+                iframe_src=entry.iframe,
+                views=entry.views,
+                duration=entry.duration,
+                description=entry.description,
+            )
+        )
     return out
