@@ -54,20 +54,19 @@ def from_rss(rss_str: str) -> List[VideoInfo]:
     out: List[VideoInfo] = []
     parsed = feedparser.parse(rss_str)
     for entry in parsed.entries:
-        out.append(
-            VideoInfo(
-                channel_name=entry.channel_name,
-                title=entry.title,
-                date_published=iso_fmt(entry.published),
-                date_lastupdated=iso_fmt(entry.lastupdated),
-                channel_url=entry.channel_url,
-                source=entry.host,
-                url=entry.url,
-                img_src=entry.thumbnail,
-                iframe_src=entry.iframe,
-                views=entry.views,
-                duration=entry.duration,
-                description=entry.description,
-            )
+        vid = VideoInfo(
+            channel_name=entry.channel_name,
+            title=entry.title,
+            date_published=iso_fmt(entry.published),
+            date_lastupdated=iso_fmt(entry.lastupdated),
+            channel_url=entry.channel_url,
+            source=entry.host,
+            url=entry.url,
+            img_src=entry.thumbnail,
+            iframe_src=entry.iframe,
+            views=entry.views,
+            duration=entry.duration,
+            description=entry.description,
         )
+        out.append(vid)
     return out
