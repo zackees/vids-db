@@ -11,9 +11,6 @@ WORKDIR /app
 COPY ./requirements.txt requirements.txt
 RUN pip install -r requirements.txt
 
-# Force the download of the static_ffmpeg executable.
-RUN static_ffmpeg -version
-
 # Add requirements file and install.
 COPY . .
 
