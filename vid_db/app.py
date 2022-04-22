@@ -31,8 +31,8 @@ HERE = os.path.dirname(__file__)
 PROJECT_ROOT = os.path.dirname(HERE)
 DATA = os.path.join(PROJECT_ROOT, "data")
 os.makedirs(DATA, exist_ok=True)
-DEFAULT_VID_DB_FILE = os.path.join(DATA, "vid_db.sqlite")
-VID_DB_FILE = os.environ.get("VID_DB_FILE", DEFAULT_VID_DB_FILE)
+assert "VID_DB_FILE" in os.environ, "VID_DB_FILE not set"
+VID_DB_FILE = os.environ["VID_DB_FILE"]
 
 VID_DB = Database(VID_DB_FILE)
 
