@@ -27,3 +27,8 @@ Server for storing video information.
   * `git clone https://github.com/zackees/vid_db`
   * `cd vid_db`
   * `tox`
+
+# TODO:
+
+  * Whoosh full search text search engine:
+    * https://github.com/npcole/whoosh/tree/main/tests
