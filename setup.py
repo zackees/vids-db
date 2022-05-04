@@ -12,7 +12,7 @@ from setuptools import Command, find_packages, setup
 HERE = os.path.dirname(__file__)
 
 NAME = "vid_db"
-DESCRIPTION = "Server to run ytclip."
+DESCRIPTION = "Server running vid_db"
 URL = "https://github.com/zackees/vid_db"
 EMAIL = "dont@email.me"
 AUTHOR = "Zach Vorhies"
@@ -26,15 +26,39 @@ with open(os.path.join(HERE, "README.md"), encoding="utf-8", mode="rt") as fd:
 with open(os.path.join(HERE, "requirements.txt"), encoding="utf-8", mode="rt") as fd:
     REQUIREMENTS = [line.strip() for line in fd.readlines() if line.strip()]
 
-with open(
-    os.path.join(HERE, "vid_db", "version.py"), encoding="utf-8", mode="rt"
-) as fd:
-    for line in fd.readlines():
-        if line.startswith("VERSION"):
-            VERSION = line.split("=")[1].strip().strip('"')
-            break
 
-assert VERSION
+def get_requirements():
+    """
+    Return requirements as list.
+
+    package1==1.0.3
+    package2==0.0.5
+    """
+    with open(os.path.join(HERE, "requirements.txt"), encoding="utf-8", mode="rt") as f:
+        packages = []
+        for line in f:
+            line = line.strip()
+            # let's also ignore empty lines and comments
+            if not line or line.startswith("#"):
+                continue
+            if "https://" in line:
+                tail = line.rsplit("/", 1)[1]
+                tail = tail.split("#")[0]
+                line = tail.replace("@", "==").replace(".git", "")
+            packages.append(line)
+    return packages
+
+
+def get_version() -> str:
+    with open(os.path.join(HERE, "vid_db", "version.py"), encoding="utf-8", mode="rt") as fd:
+        for line in fd.readlines():
+            if line.startswith("VERSION"):
+                VERSION = line.split("=")[1].strip().strip('"')
+                return VERSION
+    raise RuntimeError("Could not find version")
+
+
+VERSION = get_version()
 
 
 class UploadCommand(Command):
