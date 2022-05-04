@@ -4,7 +4,7 @@
 
 import os
 from datetime import datetime
-from typing import Any, List
+from typing import List
 
 from whoosh import fields  # type: ignore
 from whoosh.analysis import FancyAnalyzer  # type: ignore
@@ -39,7 +39,7 @@ def _filter_out_duplicate_videos(videos: List[VideoInfo]) -> List[VideoInfo]:
     return filtered_videos
 
 
-class FullTextSearchDb:
+class DbFullTextSearch:
     """Impelmentation of a full text search database."""
 
     def __init__(self, index_path) -> None:
@@ -66,7 +66,7 @@ class FullTextSearchDb:
                         views=vid.views,
                     )
 
-    def title_search(self, query_string: str, limit: int = 40) -> List[Any]:
+    def title_search(self, query_string: str, limit: int = 40) -> List[dict]:
         """Searcher for videos by title."""
         qparser = QueryParser("title", schema=SCHEMA)
         qparser.add_plugin(DateParserPlugin(free=False))
@@ -79,5 +79,16 @@ class FullTextSearchDb:
                 "MultiMatcher",
             ], f"{matcher.__class__.__name__} was unexpected"
             results = searcher.search(query, mask=None, limit=limit)
-            urls = sorted([fields["url"] for fields in results])
-            return urls
+            # Convert the results to dicts.
+            results_dicts = []
+            for result in results:
+                results_dicts.append(
+                    {
+                        "url": result["url"],
+                        "channel_name": result["channel_name"],
+                        "date": result["date"],
+                        "title": result["title"],
+                        "views": result["views"],
+                    }
+                )
+            return results_dicts

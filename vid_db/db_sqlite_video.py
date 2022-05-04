@@ -9,15 +9,29 @@ from typing import Any, Dict, List, Optional
 
 from vid_db.video_info import VideoInfo
 
+TABLE_NAME = "videos"
+
+CREATE_STMT: str = "\n".join(
+    [
+        "PRAGMA journal_mode=wal2;",
+        f"CREATE TABLE {TABLE_NAME} (",
+        "   url TEXT PRIMARY KEY UNIQUE NOT NULL,",
+        "   channel_name TEXT,",
+        "   timestamp_published INT,",
+        "   data TEXT);",
+        f"CREATE INDEX index_channel_name ON {TABLE_NAME}(channel_name);",
+        f"CREATE INDEX timestamp_published ON {TABLE_NAME}(channel_name);",
+    ]
+)
+
 
 class DbSqliteVideo:
     """SQLite3 context manager"""
 
-    def __init__(self, db_path: str, table_name: str) -> None:
+    def __init__(self, db_path: str) -> None:
         self.db_path = db_path
         folder_path = os.path.dirname(self.db_path)
         os.makedirs(folder_path, exist_ok=True)
-        self.table_name = table_name.replace("-", "_")
         if self.db_path == "" or self.db_path == ":memory:":
             raise ValueError("Can not use in memory database for DbSqliteVideo")
         self.create_table()
@@ -25,25 +39,14 @@ class DbSqliteVideo:
     def create_table(self) -> None:
         with self.open_db_for_write() as conn:
             # Check to see if it's exists first of all.
-            check_table_stmt = f"SELECT name FROM sqlite_master WHERE type='table' AND name='{self.table_name}';"
+            check_table_stmt = f"SELECT name FROM sqlite_master WHERE type='table' AND name='{TABLE_NAME}';"
             cursor = conn.execute(check_table_stmt)
             has_table = cursor.fetchall()
             if has_table:
                 return
-        create_stmt = [
-            "PRAGMA journal_mode=wal2;",
-            f"CREATE TABLE {self.table_name} (",
-            "   url TEXT PRIMARY KEY UNIQUE NOT NULL,",
-            "   channel_name TEXT,",
-            "   timestamp_published INT,",
-            "   data TEXT);",
-            f"CREATE INDEX index_channel_name ON {self.table_name}(channel_name);",
-            f"CREATE INDEX timestamp_published ON {self.table_name}(channel_name);",
-        ]
-        create_stmt_str: str = "\n".join(create_stmt)
         with self.open_db_for_write() as conn:
             try:
-                conn.executescript(create_stmt_str)
+                conn.executescript(CREATE_STMT)
             except sqlite3.ProgrammingError:
                 pass  # Table already created
 
@@ -82,7 +85,7 @@ class DbSqliteVideo:
 
     def insert_or_update(self, vids: List[VideoInfo]) -> None:
         insert_stmt = [
-            f"INSERT OR REPLACE INTO {self.table_name} (",
+            f"INSERT OR REPLACE INTO {TABLE_NAME} (",
             "    url,",
             "    channel_name,",
             "    timestamp_published,",
@@ -108,9 +111,7 @@ class DbSqliteVideo:
             conn.commit()
 
     def find_videos_by_channel_name(self, channel_name: str) -> List[VideoInfo]:
-        select_stmt = (
-            f"SELECT data FROM {self.table_name} WHERE channel_name=(?)"
-        )
+        select_stmt = f"SELECT data FROM {TABLE_NAME} WHERE channel_name=(?)"
         output: List[str] = []
         with self.open_db_for_read() as conn:
             cursor = conn.execute(select_stmt, (channel_name,))
@@ -120,7 +121,7 @@ class DbSqliteVideo:
 
     def find_videos_by_urls(self, urls: List[str]) -> List[VideoInfo]:
         outlist: List[VideoInfo] = []
-        select_stmt = f"SELECT data FROM {self.table_name} WHERE url=(?)"
+        select_stmt = f"SELECT data FROM {TABLE_NAME} WHERE url=(?)"
         with self.open_db_for_read() as conn:
             for url in urls:
                 cursor = conn.execute(select_stmt, (url,))
@@ -151,13 +152,13 @@ class DbSqliteVideo:
             limit_clause = ""
         if channel_name is None:
             select_stmt = (
-                f"SELECT data FROM {self.table_name} WHERE timestamp_published BETWEEN ? AND ?"
+                f"SELECT data FROM {TABLE_NAME} WHERE timestamp_published BETWEEN ? AND ?"
                 f" ORDER BY timestamp_published DESC {limit_clause};"
             )
             values = (from_time, to_time)  # type: ignore
         else:
             select_stmt = (
-                f"SELECT data FROM {self.table_name} WHERE channel_name=(?) and"
+                f"SELECT data FROM {TABLE_NAME} WHERE channel_name=(?) and"
                 " timestamp_published BETWEEN ? AND ?"
                 f" ORDER BY timestamp_published DESC {limit_clause};"
             )
@@ -173,7 +174,7 @@ class DbSqliteVideo:
         return output
 
     def get_all_videos(self) -> List[VideoInfo]:
-        select_stmt = f"SELECT data FROM {self.table_name}"
+        select_stmt = f"SELECT data FROM {TABLE_NAME}"
         output: List[str] = []
         with self.open_db_for_read() as conn:
             cursor = conn.execute(select_stmt)
@@ -183,7 +184,7 @@ class DbSqliteVideo:
 
     def to_data(self) -> List[Any]:
         out = []
-        select_stmt = f"SELECT * FROM {self.table_name}"
+        select_stmt = f"SELECT * FROM {TABLE_NAME}"
         with self.open_db_for_read() as conn:
             cursor = conn.execute(select_stmt)
             for row in cursor:

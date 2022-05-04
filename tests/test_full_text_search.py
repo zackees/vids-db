@@ -9,11 +9,11 @@ import tempfile
 import unittest
 from datetime import datetime
 
-from vid_db.db_full_text_search import FullTextSearchDb
+from vid_db.db_full_text_search import DbFullTextSearch
 from vid_db.video_info import VideoInfo
 
 
-class FullTextSearchDbTester(unittest.TestCase):
+class DbFullTextSearchTester(unittest.TestCase):
     """Tester for the Full Search Text Database"""
 
     def setUp(self) -> None:
@@ -26,7 +26,7 @@ class FullTextSearchDbTester(unittest.TestCase):
 
     def test(self) -> None:
         """Test the full text search database."""
-        db = FullTextSearchDb(index_path=self.tempdir)
+        db = DbFullTextSearch(index_path=self.tempdir)
         vid = VideoInfo(
             channel_name="RedPill78",
             title="TheRedPill",
@@ -59,7 +59,7 @@ class FullTextSearchDbTester(unittest.TestCase):
         Tests that videos can be added twice but they will
         only exist once in the database.
         """
-        db = FullTextSearchDb(index_path=self.tempdir)
+        db = DbFullTextSearch(index_path=self.tempdir)
         vid = VideoInfo(
             channel_name="RedPill78",
             title="TheRedPill",
@@ -84,7 +84,7 @@ class FullTextSearchDbTester(unittest.TestCase):
         Tests that the videos can be added in the same batch and
         only exist once in the database.
         """
-        db = FullTextSearchDb(index_path=self.tempdir)
+        db = DbFullTextSearch(index_path=self.tempdir)
         vid = VideoInfo(
             channel_name="RedPill78",
             title="TheRedPill",
