@@ -1,10 +1,15 @@
+"""
+Tests the sqlite video database
+"""
+
+# pylint: disable=invalid-name
+
 import os
 import tempfile
 import unittest
 from datetime import datetime, timedelta
 from typing import List
 
-from vid_db.date import iso_fmt
 from vid_db.db_sqlite_video import DbSqliteVideo
 from vid_db.video_info import VideoInfo
 
@@ -48,7 +53,11 @@ class DbSqliteVideoTester(unittest.TestCase):
 
     def create_tempfile_path(self) -> str:
         """Creates a temporary file that will be deleted when the test is complete."""
-        tmp_file = tempfile.NamedTemporaryFile(suffix=".sqlite3", delete=False)
+        tmp_file = (
+            tempfile.NamedTemporaryFile(  # pylint: disable=consider-using-with
+                suffix=".sqlite3", delete=False
+            )
+        )
         tmp_file.close()
         self.cleanup.append(lambda: os.remove(tmp_file.name))
         return os.path.abspath(tmp_file.name)
@@ -58,10 +67,12 @@ class DbSqliteVideoTester(unittest.TestCase):
         db_path = self.create_tempfile_path()
         db = DbSqliteVideo(db_path, "table-name")
         video_in: VideoInfo = test_video_info()
-        db.insert_or_update(video_in)
+        db.insert_or_update([video_in])
         video_in.url = "vid_url1.html"
-        db.insert_or_update(video_in)
-        videos: List[VideoInfo] = db.find_videos_by_channel_name(channel_name="XXchannel_name")
+        db.insert_or_update([video_in])
+        videos: List[VideoInfo] = db.find_videos_by_channel_name(
+            channel_name="XXchannel_name"
+        )
         self.assertEqual(2, len(videos))
 
     def test_add_update_video_info(self):
@@ -70,10 +81,10 @@ class DbSqliteVideoTester(unittest.TestCase):
         db = DbSqliteVideo(db_path, "table-name")
         video_in: VideoInfo = test_video_info()
         video_in.views = "555"
-        db.insert_or_update(video_in)
+        db.insert_or_update([video_in])
         # Add the same value one hour later
         video_in.views = "1000"
-        db.insert_or_update(video_in)
+        db.insert_or_update([video_in])
         vid_out: VideoInfo = db.find_video_by_url(video_in.url)  # type: ignore
         self.assertEqual(vid_out.views, 1000)
 
@@ -82,7 +93,7 @@ class DbSqliteVideoTester(unittest.TestCase):
         db_path = self.create_tempfile_path()
         db = DbSqliteVideo(db_path, "table-name")
         video_in: VideoInfo = test_video_info()
-        db.insert_or_update(video_in)
+        db.insert_or_update([video_in])
         vid = db.find_video_by_url(video_in.url)
         self.assertEqual(vid, video_in)
 
@@ -90,8 +101,8 @@ class DbSqliteVideoTester(unittest.TestCase):
         """Tests that two videos can be found by url."""
         db_path = self.create_tempfile_path()
         db = DbSqliteVideo(db_path, "table-name")
-        db.insert_or_update(test_video_info(url="a"))
-        db.insert_or_update(test_video_info(url="b"))
+        vids = [test_video_info(url="a"), test_video_info(url="b")]
+        db.insert_or_update(vids)
         vids = db.find_videos_by_urls(["a", "b"])
         self.assertEqual(2, len(vids))
 
@@ -100,7 +111,7 @@ class DbSqliteVideoTester(unittest.TestCase):
         db_path = self.create_tempfile_path()
         db = DbSqliteVideo(db_path, "table-name")
         video_in: VideoInfo = test_video_info()
-        db.insert_or_update(video_in)
+        db.insert_or_update([video_in])
         date_start: datetime = video_in.date_published
         date_end: datetime = date_start + timedelta(seconds=1)
         found_vids: List[VideoInfo] = db.find_videos(date_start, date_end)
@@ -113,11 +124,12 @@ class DbSqliteVideoTester(unittest.TestCase):
         db = DbSqliteVideo(db_path, "table-name")
         video_0: VideoInfo = test_video_info("vid_url0.html")
         video_1: VideoInfo = test_video_info("vid_url1.html")
-        db.insert_or_update(video_0)
-        db.insert_or_update(video_1)
+        db.insert_or_update([video_0, video_1])
         date_start: datetime = video_0.date_published
         date_end: datetime = date_start + timedelta(seconds=1)
-        found_vids: List[VideoInfo] = db.find_videos(date_start, date_end, limit_count=1)
+        found_vids: List[VideoInfo] = db.find_videos(
+            date_start, date_end, limit_count=1
+        )
         self.assertEqual(1, len(found_vids))
 
 

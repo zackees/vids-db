@@ -2,6 +2,8 @@
     Tests whoosh full text search
 """
 
+# pylint: disable=invalid-name,R0801
+
 import shutil
 import tempfile
 import unittest
@@ -53,7 +55,10 @@ class FullTextSearchDbTester(unittest.TestCase):
         self.assertEqual(1, len(out))
 
     def test_double_add(self) -> None:
-        """Tests that videos can be added twice but they will only exist once in the database."""
+        """
+        Tests that videos can be added twice but they will
+        only exist once in the database.
+        """
         db = FullTextSearchDb(index_path=self.tempdir)
         vid = VideoInfo(
             channel_name="RedPill78",
@@ -75,7 +80,10 @@ class FullTextSearchDbTester(unittest.TestCase):
         self.assertEqual(1, len(out))
 
     def test_double_add2(self) -> None:
-        """Tests that the videos can be added in the same batch and only exist once in the database."""
+        """
+        Tests that the videos can be added in the same batch and
+        only exist once in the database.
+        """
         db = FullTextSearchDb(index_path=self.tempdir)
         vid = VideoInfo(
             channel_name="RedPill78",

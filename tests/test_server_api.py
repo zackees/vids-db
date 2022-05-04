@@ -1,10 +1,20 @@
+"""
+Tests the fastapi server.
+"""
+
+# pylint: disable=invalid-name,R0801
+
 import os
 import time
 import unittest
 from datetime import datetime
 
-import requests
-from vid_db.testing.run_server_in_thread import HOST, PORT, run_server_in_thread
+import requests  # type: ignore
+from vid_db.testing.run_server_in_thread import (  # type: ignore
+    HOST,
+    PORT,
+    run_server_in_thread,
+)
 from vid_db.version import VERSION
 from vid_db.video_info import VideoInfo
 
@@ -52,7 +62,7 @@ class ApiServerTester(unittest.TestCase):
             self.assertEqual(VERSION, version)
 
     # @unittest.skip("Skip for now")
-    def test_platform_put_get(self) -> None:
+    def test_platform_put_get(self) -> None:  # pylint: disable=no-self-use
         """Opens up the vid_db and tests that the version returned is correct."""
         with run_server_in_thread():
             time.sleep(1)

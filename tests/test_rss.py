@@ -1,11 +1,13 @@
+"""
+Tests rss generation.
+"""
+
 import unittest
 from datetime import datetime
 
-import feedparser
+import feedparser  # type: ignore
 from vid_db.rss import from_rss, to_rss
 from vid_db.video_info import VideoInfo
-
-# from vid_db.app import app
 
 URL = "http://localhost"
 
@@ -44,7 +46,9 @@ class RssTester(unittest.TestCase):
         entry = parsed.entries[0]
         self.assertEqual("test_channel", entry.channel_name)
         self.assertEqual("test_title", entry.title)
-        self.assertEqual("http://localhost/channel/test_channel", entry.channel_url)
+        self.assertEqual(
+            "http://localhost/channel/test_channel", entry.channel_url
+        )
         self.assertEqual("test description", entry.description)
         self.assertEqual("100", entry.views)
         self.assertEqual("60", entry.duration)

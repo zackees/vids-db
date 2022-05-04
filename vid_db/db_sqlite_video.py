@@ -25,9 +25,7 @@ class DbSqliteVideo:
     def create_table(self) -> None:
         with self.open_db_for_write() as conn:
             # Check to see if it's exists first of all.
-            check_table_stmt = (
-                f"SELECT name FROM sqlite_master WHERE type='table' AND name='{self.table_name}';"
-            )
+            check_table_stmt = f"SELECT name FROM sqlite_master WHERE type='table' AND name='{self.table_name}';"
             cursor = conn.execute(check_table_stmt)
             has_table = cursor.fetchall()
             if has_table:
@@ -52,9 +50,13 @@ class DbSqliteVideo:
     @contextmanager
     def open_db_for_write(self):
         try:
-            conn = sqlite3.connect(self.db_path, check_same_thread=False, timeout=10)
+            conn = sqlite3.connect(
+                self.db_path, check_same_thread=False, timeout=10
+            )
         except sqlite3.OperationalError as e:
-            raise OSError("Error while opening %s\nOriginal Error: %s" % (self.db_path, e))
+            raise OSError(
+                "Error while opening %s\nOriginal Error: %s" % (self.db_path, e)
+            )
         try:
             yield conn
         except Exception:
@@ -66,19 +68,19 @@ class DbSqliteVideo:
     @contextmanager
     def open_db_for_read(self):
         try:
-            conn = sqlite3.connect(self.db_path, check_same_thread=False, timeout=10)
+            conn = sqlite3.connect(
+                self.db_path, check_same_thread=False, timeout=10
+            )
         except sqlite3.OperationalError as e:
-            raise OSError("Error while opening %s\nOriginal Error: %s" % (self.db_path, e))
+            raise OSError(
+                "Error while opening %s\nOriginal Error: %s" % (self.db_path, e)
+            )
         try:
             yield conn
         finally:
             conn.close()
 
-    def insert_or_update(self, video_info: VideoInfo) -> None:
-        channel_name = video_info.channel_name
-        url = video_info.url
-        # Convert datetime to unix timestamp
-        timestamp_published = int(video_info.date_published.timestamp())
+    def insert_or_update(self, vids: List[VideoInfo]) -> None:
         insert_stmt = [
             f"INSERT OR REPLACE INTO {self.table_name} (",
             "    url,",
@@ -88,20 +90,27 @@ class DbSqliteVideo:
             ") VALUES (?, ?, ?, ?)",
         ]
         insert_stmt_cmd = "\n".join(insert_stmt)
-        data = video_info.to_dict()
-        json_data = json.dumps(data, ensure_ascii=False)
-        record = (
-            url,
-            channel_name,
-            timestamp_published,
-            json_data,
-        )
+        records = []
+        for vid in vids:
+            # Convert datetime to unix timestamp
+            timestamp_published = int(vid.date_published.timestamp())
+            data = vid.to_dict()
+            json_data = json.dumps(data, ensure_ascii=False)
+            record = (
+                vid.url,
+                vid.channel_name,
+                timestamp_published,
+                json_data,
+            )
+            records.append(record)
         with self.open_db_for_write() as conn:
-            conn.execute(insert_stmt_cmd, record)
+            conn.executemany(insert_stmt_cmd, records)
             conn.commit()
 
     def find_videos_by_channel_name(self, channel_name: str) -> List[VideoInfo]:
-        select_stmt = f"SELECT data FROM {self.table_name} WHERE channel_name=(?)"
+        select_stmt = (
+            f"SELECT data FROM {self.table_name} WHERE channel_name=(?)"
+        )
         output: List[str] = []
         with self.open_db_for_read() as conn:
             cursor = conn.execute(select_stmt, (channel_name,))

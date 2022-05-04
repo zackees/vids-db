@@ -14,11 +14,10 @@ class Database:
 
     def update_many(self, vids: List[VideoInfo]) -> None:  # type: ignore
         # TODO: Speed up.
-        for video in vids:
-            self.db_videos.insert_or_update(video)
+        self.db_videos.insert_or_update(vids)
 
-    def update(self, video_info: VideoInfo) -> None:
-        self.db_videos.insert_or_update(video_info)
+    def update(self, vid: VideoInfo) -> None:
+        self.db_videos.insert_or_update([vid])
 
     def get_video_list(
         self,
