@@ -2,7 +2,7 @@
     Implements a full text search engine.
 """
 
-
+import os
 from datetime import datetime
 from typing import Any, List
 
@@ -48,6 +48,7 @@ class FullTextSearchDb:
         if self.storage.index_exists():
             self.index = self.storage.open_index()
         else:
+            os.makedirs(index_path, exist_ok=True)
             self.index = self.storage.create_index(SCHEMA)
 
     def add_videos(self, videos: List[VideoInfo]) -> None:
