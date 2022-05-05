@@ -22,7 +22,6 @@ class Database:
         self.db_full_text_search = DbFullTextSearch(db_path_fts)
 
     def update_many(self, vids: List[VideoInfo]) -> None:  # type: ignore
-        # TODO: Speed up.
         self.db_sqlite.insert_or_update(vids)
         self.db_full_text_search.add_videos(vids)
 
