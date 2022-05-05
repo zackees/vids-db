@@ -6,6 +6,7 @@ import os
 from datetime import datetime
 from typing import List
 
+import pytz
 from whoosh import fields  # type: ignore
 from whoosh.analysis import FancyAnalyzer  # type: ignore
 from whoosh.compat import u  # type: ignore
@@ -54,17 +55,16 @@ class DbFullTextSearch:
     def add_videos(self, videos: List[VideoInfo]) -> None:
         """Add videos to the database."""
         videos = _filter_out_duplicate_videos(videos)
-        utc_tz = datetime.utcnow().tzinfo
         with self.index.writer() as writer:
             with writer.group():
                 for vid in videos:
                     published: datetime = vid.date_published
                     # Change published datetime to utc timezone.
-                    published = published.astimezone(utc_tz)
+                    published_utc = published.astimezone(pytz.utc)
                     writer.update_document(
                         url=vid.url,
                         channel_name=u(vid.channel_name),
-                        date=published,
+                        date=published_utc,
                         title=u(vid.title),
                         views=vid.views,
                     )
