@@ -54,13 +54,13 @@ class DbFullTextSearch:
     def add_videos(self, videos: List[VideoInfo]) -> None:
         """Add videos to the database."""
         videos = _filter_out_duplicate_videos(videos)
-        UTC_TZ = datetime.utcnow().tzinfo
+        utc_tz = datetime.utcnow().tzinfo
         with self.index.writer() as writer:
             with writer.group():
                 for vid in videos:
                     published: datetime = vid.date_published
                     # Change published datetime to utc timezone.
-                    published = published.astimezone(UTC_TZ)
+                    published = published.astimezone(utc_tz)
                     writer.update_document(
                         url=vid.url,
                         channel_name=u(vid.channel_name),
