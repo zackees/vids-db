@@ -8,17 +8,18 @@ from vid_db.db_sqlite_video import DbSqliteVideo  # type: ignore
 from vid_db.video_info import VideoInfo
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-DB_PATH_DIR = os.path.join(HERE, "data")
-DB_PATH_FTS = os.path.join(DB_PATH_DIR, "full_text_seach")
-DB_PATH_SQLITE = os.path.join(DB_PATH_DIR, "videos.sqlite")
+PROJECT_ROOT = os.path.dirname(HERE)
+DB_PATH_DIR = os.path.join(PROJECT_ROOT, "data")
 os.makedirs(DB_PATH_DIR, exist_ok=True)
 
 
 class Database:
-    def __init__(self, db_path: str) -> None:
+    def __init__(self, db_path: str = DB_PATH_DIR) -> None:
         self.db_path = db_path
-        self.db_sqlite = DbSqliteVideo(DB_PATH_SQLITE)
-        self.db_full_text_search = DbFullTextSearch(DB_PATH_FTS)
+        db_path_sqlite = os.path.join(db_path, "videos.sqlite")
+        db_path_fts = os.path.join(db_path, "full_text_seach")
+        self.db_sqlite = DbSqliteVideo(db_path_sqlite)
+        self.db_full_text_search = DbFullTextSearch(db_path_fts)
 
     def update_many(self, vids: List[VideoInfo]) -> None:  # type: ignore
         # TODO: Speed up.
@@ -48,7 +49,20 @@ class Database:
         options = {}
         if limit is not None:
             options["limit"] = limit
-        vid_list: List[dict] = self.db_full_text_search.title_search(
+        vids0: List[dict] = self.db_full_text_search.channel_search(
             query_string, **options
         )
-        return vid_list
+        vids1: List[dict] = self.db_full_text_search.title_search(
+            query_string, **options
+        )
+        vid_list = vids0 + vids1
+        found_urls = set()
+        filtered_vids = []
+        for vid in vid_list:
+            if vid["url"] in found_urls:
+                continue
+            found_urls.add(vid["url"])
+            filtered_vids.append(vid)
+        if limit is not None:
+            filtered_vids = filtered_vids[:limit]
+        return filtered_vids

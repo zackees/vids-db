@@ -4,6 +4,7 @@
 
 # pylint: disable=invalid-name,R0801
 
+import os
 import shutil
 import tempfile
 import unittest
@@ -42,17 +43,17 @@ class DatabaseTester(unittest.TestCase):
             views=1,
         )
         db.update(vid)
-        result = db.query_video_list("Red")
+        result = db.query_video_list("RedPill78")
         self.assertEqual(1, len(result))
         print(result)
 
-    @unittest.skip("Feature: search by channel name too")
-    def test2(self) -> None:
+    def test_search_by_channel_name(self) -> None:
         """Test the full text search database."""
         db = Database(db_path=self.tempdir)
+        self.assertTrue(os.listdir(self.tempdir))
         vid = VideoInfo(
             channel_name="RedPill78",
-            title="TheRedPill",
+            title="",
             date_published=datetime.now(),
             date_lastupdated=datetime.now(),
             channel_url="https://www.youtube.com/channel/UC-9-kyTW8ZkZNDHQJ6FgpwQ",

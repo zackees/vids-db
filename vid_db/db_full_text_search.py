@@ -18,7 +18,9 @@ from vid_db.video_info import VideoInfo
 
 SCHEMA = fields.Schema(
     url=fields.ID(stored=True, unique=True, sortable=True),
-    channel_name=fields.TEXT(stored=True, sortable=True),
+    channel_name=fields.TEXT(
+        stored=True, chars=True, vector=True, analyzer=FancyAnalyzer()
+    ),
     date=fields.DATETIME(stored=True, sortable=True),
     title=fields.TEXT(stored=True, analyzer=FancyAnalyzer()),
     views=fields.NUMERIC(stored=True, sortable=True, bits=64),
@@ -73,12 +75,19 @@ class DbFullTextSearch:
         self, field_name: str, query_string: str, limit: int = 40
     ) -> List[dict]:
         """Searcher for videos by one of the fields."""
+        # Use a regex to seperate the query string into words, breaking at number
+        # bounderies.
+
         qparser = QueryParser(field_name, schema=SCHEMA)
         qparser.add_plugin(DateParserPlugin(free=False))
-        query = qparser.parse(query_string)
+        qry = qparser.parse(query_string)
+        # from whoosh import query
+
+        # qry = query.Phrase(field_name, query_string)
+        # query = query.FuzzyTerm(field_name, query_string)
         with self.index.searcher() as searcher:
             # matcher = query.matcher(searcher)  # useful for debugging
-            results = searcher.search(query, mask=None, limit=limit)
+            results = searcher.search(qry, mask=None, limit=limit, terms=True)
             # Convert the results to dicts.
             results_dicts = []
             for result in results:
@@ -96,3 +105,7 @@ class DbFullTextSearch:
     def title_search(self, query_string: str, limit: int = 40) -> List[dict]:
         """Searcher for videos by title."""
         return self._field_search("title", query_string, limit)
+
+    def channel_search(self, query_string: str, limit: int = 40) -> List[dict]:
+        """Searcher for videos by title."""
+        return self._field_search("channel_name", query_string, limit)

@@ -4,6 +4,7 @@
 
 # pylint: disable=invalid-name,R0801
 
+import os
 import shutil
 import tempfile
 import unittest
@@ -27,6 +28,7 @@ class DbFullTextSearchTester(unittest.TestCase):
     def test_title_search(self) -> None:
         """Test the full text search database."""
         db = DbFullTextSearch(index_path=self.tempdir)
+        self.assertTrue(os.listdir(self.tempdir))
         vid = VideoInfo(
             channel_name="RedPill78",
             title="TheRedPill",
@@ -51,6 +53,7 @@ class DbFullTextSearchTester(unittest.TestCase):
     def test_date_range_search(self) -> None:
         """Test the full text search database."""
         db = DbFullTextSearch(index_path=self.tempdir)
+        self.assertTrue(os.listdir(self.tempdir))
         vid = VideoInfo(
             channel_name="RedPill78",
             title="TheRedPill",
@@ -78,6 +81,7 @@ class DbFullTextSearchTester(unittest.TestCase):
         only exist once in the database.
         """
         db = DbFullTextSearch(index_path=self.tempdir)
+        self.assertTrue(os.listdir(self.tempdir))
         vid = VideoInfo(
             channel_name="RedPill78",
             title="TheRedPill",
@@ -103,6 +107,7 @@ class DbFullTextSearchTester(unittest.TestCase):
         only exist once in the database.
         """
         db = DbFullTextSearch(index_path=self.tempdir)
+        self.assertTrue(os.listdir(self.tempdir))
         vid = VideoInfo(
             channel_name="RedPill78",
             title="TheRedPill",
