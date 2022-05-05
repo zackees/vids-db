@@ -5,6 +5,7 @@ Tests the fastapi server.
 # pylint: disable=invalid-name,R0801
 
 import os
+import shutil
 import time
 import unittest
 from datetime import datetime
@@ -18,16 +19,14 @@ from vid_db.testing.run_server_in_thread import (  # type: ignore
 from vid_db.version import VERSION
 from vid_db.video_info import VideoInfo
 
-# from vid_db.app import app
-
 # In our testing environment we use the same database for all tests.
 HERE = os.path.dirname(os.path.abspath(__file__))
-TEST_DB = os.path.join(HERE, "data", "test_vid_db.sqlite")
+TEST_DB = os.path.join(HERE, "data")
 URL = f"http://{HOST}:{PORT}"
 
 
 if os.path.exists(TEST_DB):
-    os.remove(TEST_DB)
+    shutil.rmtree(TEST_DB, ignore_errors=True)
 
 os.environ.update({"VID_DB_FILE": TEST_DB})
 

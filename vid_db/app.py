@@ -25,16 +25,10 @@ from vid_db.rss import to_rss
 from vid_db.version import VERSION
 from vid_db.video_info import VideoInfo
 
+HERE = os.path.dirname(os.path.abspath(__file__))
+
 executor = ThreadPoolExecutor(max_workers=8)
-
-HERE = os.path.dirname(__file__)
-PROJECT_ROOT = os.path.dirname(HERE)
-DATA = os.path.join(PROJECT_ROOT, "data")
-os.makedirs(DATA, exist_ok=True)
-assert "VID_DB_FILE" in os.environ, "VID_DB_FILE not set"
-VID_DB_FILE = os.environ["VID_DB_FILE"]
-
-VID_DB = Database(VID_DB_FILE)
+VID_DB = Database()
 
 app = FastAPI()
 
@@ -72,16 +66,6 @@ class RssQuery(BaseModel):  # pylint: disable=too-few-public-methods
     limit: int = -1
 
 
-def get_file(filename):  # pragma: no cover
-    """Get the contents of a file."""
-    try:
-        src = os.path.join(HERE, filename)
-        # Specify binary mode to avoid decoding errors
-        return open(src, mode="rb").read()  # pytype: disable=unspecified-encoding
-    except IOError as exc:
-        return str(exc)
-
-
 def log_error(msg: str) -> None:
     """Logs an error to the print stream."""
     print(msg)
@@ -117,10 +101,14 @@ async def api_query(query: Query) -> JSONResponse:
     out: List[VideoInfo] = []
     if query.channel_names is None:
         query.channel_names = []
-        out.extend(VID_DB.get_video_list(query.start, query.end, None, query.limit))
+        out.extend(
+            VID_DB.get_video_list(query.start, query.end, None, query.limit)
+        )
     else:
         for channel_name in query.channel_names:
-            data = VID_DB.get_video_list(query.start, query.end, channel_name, query.limit)
+            data = VID_DB.get_video_list(
+                query.start, query.end, channel_name, query.limit
+            )
             out.extend(data)
     return JSONResponse(VideoInfo.to_plain_list(out))
 

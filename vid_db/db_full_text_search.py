@@ -75,16 +75,9 @@ class DbFullTextSearch:
         self, field_name: str, query_string: str, limit: int = 40
     ) -> List[dict]:
         """Searcher for videos by one of the fields."""
-        # Use a regex to seperate the query string into words, breaking at number
-        # bounderies.
-
         qparser = QueryParser(field_name, schema=SCHEMA)
         qparser.add_plugin(DateParserPlugin(free=False))
         qry = qparser.parse(query_string)
-        # from whoosh import query
-
-        # qry = query.Phrase(field_name, query_string)
-        # query = query.FuzzyTerm(field_name, query_string)
         with self.index.searcher() as searcher:
             # matcher = query.matcher(searcher)  # useful for debugging
             results = searcher.search(qry, mask=None, limit=limit, terms=True)
