@@ -6,7 +6,7 @@ import os
 from datetime import datetime
 from typing import List
 
-import pytz
+import pytz  # type: ignore
 from whoosh import fields  # type: ignore
 from whoosh.analysis import FancyAnalyzer  # type: ignore
 from whoosh.compat import u  # type: ignore
@@ -69,18 +69,15 @@ class DbFullTextSearch:
                         views=vid.views,
                     )
 
-    def title_search(self, query_string: str, limit: int = 40) -> List[dict]:
-        """Searcher for videos by title."""
-        qparser = QueryParser("title", schema=SCHEMA)
+    def _field_search(
+        self, field_name: str, query_string: str, limit: int = 40
+    ) -> List[dict]:
+        """Searcher for videos by one of the fields."""
+        qparser = QueryParser(field_name, schema=SCHEMA)
         qparser.add_plugin(DateParserPlugin(free=False))
         query = qparser.parse(query_string)
         with self.index.searcher() as searcher:
-            matcher = query.matcher(searcher)
-            assert matcher.__class__.__name__ in [
-                "W3LeafMatcher",
-                "IntersectionMatcher",
-                "MultiMatcher",
-            ], f"{matcher.__class__.__name__} was unexpected"
+            # matcher = query.matcher(searcher)  # useful for debugging
             results = searcher.search(query, mask=None, limit=limit)
             # Convert the results to dicts.
             results_dicts = []
@@ -95,3 +92,7 @@ class DbFullTextSearch:
                     }
                 )
             return results_dicts
+
+    def title_search(self, query_string: str, limit: int = 40) -> List[dict]:
+        """Searcher for videos by title."""
+        return self._field_search("title", query_string, limit)
