@@ -44,7 +44,7 @@ class Database:
         self,
         query_string: str,
         limit: Optional[int] = None,
-    ) -> List[dict]:
+    ) -> List[Video]:
         options = {}
         if limit is not None:
             options["limit"] = limit
@@ -64,4 +64,7 @@ class Database:
             filtered_vids.append(vid)
         if limit is not None:
             filtered_vids = filtered_vids[:limit]
-        return filtered_vids
+
+        urls = [v["url"] for v in filtered_vids]
+        vids = self.db_sqlite.find_videos_by_urls(urls)
+        return vids

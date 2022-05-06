@@ -66,10 +66,8 @@ class DatabaseTester(unittest.TestCase):
             views=1,
         )
         db.update(vid)
-        result = db.query_video_list("RedPill78")
-        urls = [v["url"] for v in result]
-        self.assertEqual(1, len(result))
-        self.assertEqual(1, len(urls))
+        vids = db.query_video_list("RedPill78")
+        self.assertEqual(1, len(vids))
 
 
 if __name__ == "__main__":
