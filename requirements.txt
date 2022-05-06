@@ -6,4 +6,4 @@ types-python-dateutil
 python-dateutil
 pydantic
 feedparser
-Whoosh @ git+https://github.com/mchaput/whoosh.git@d9a3fa2a4905e7326c9623c89e6395713c189161
+Whoosh
