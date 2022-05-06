@@ -33,7 +33,3 @@ Server for storing video information.
   * `cd vid_db`
   * `tox`
 
-# TODO:
-
-  * Whoosh full search text search engine:
-    * https://github.com/npcole/whoosh/tree/main/tests
