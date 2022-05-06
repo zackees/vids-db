@@ -2,6 +2,11 @@
 
 Server for storing video information.
 
+## Platform Unit Tests
+[![Actions Status](https://github.com/zackees/vid_db/workflows/MacOS_Tests/badge.svg)](https://github.com/zackees/vid_db/actions/workflows/test_macos.yml)
+[![Actions Status](https://github.com/zackees/vid_db/workflows/Win_Tests/badge.svg)](https://github.com/zackees/vid_db/actions/workflows/test_win.yml)
+[![Actions Status](https://github.com/zackees/vid_db/workflows/Ubuntu_Tests/badge.svg)](https://github.com/zackees/vid_db/actions/workflows/test_ubuntu.yml)
+
 # Demo
 
   * `pip install vid_db`
