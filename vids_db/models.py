@@ -16,7 +16,7 @@ from pydantic import (
     validator,
 )
 
-from vids_db.date import now_local, parse_datetime
+from vids_db.date import parse_datetime
 
 
 def parse_duration(duration: str) -> float:
@@ -142,7 +142,7 @@ class Video(BaseModel):
         """
         Returns the date published as a datetime object.
         """
-        now_time = now_time or now_local()
+        now_time = now_time or datetime.now()
         diff: timedelta = now_time - parse_datetime(self.date_published)
         return diff.total_seconds()
 
