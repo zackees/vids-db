@@ -16,15 +16,15 @@ from vid_db.models import Video
 
 def test_video_info(url: str = "http://example.com/vid_url0.html") -> Video:
     """Construct a default video info object."""
-    video = Video.from_dict(
-        {
+    video = Video(
+        **{
             "channel_name": "XXchannel_name",
             "channel_url": "https://chann_url0.html",
             "date_published": "2021-02-09 15:22:46.162038-08:00",
             "date_lastupdated": "2021-02-09 15:22:46.162038-08:00",
             "duration": "60",
             "description": "",
-            "iframe_src": "1",
+            "iframe_src": "http://example.com/iframe_url0.html",
             "img_src": "http://img_src0.jpg",
             "profile_img_src": "",
             "source": "rumble.com",

@@ -53,7 +53,7 @@ class DatabaseTester(unittest.TestCase):
         self.assertTrue(os.listdir(self.tempdir))
         vid = Video(
             channel_name="RedPill78",
-            title="",
+            title="blah title",
             date_published=datetime.now(),
             date_lastupdated=datetime.now(),
             channel_url="https://www.youtube.com/channel/UC-9-kyTW8ZkZNDHQJ6FgpwQ",

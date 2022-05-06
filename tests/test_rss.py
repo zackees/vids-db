@@ -6,8 +6,8 @@ import unittest
 from datetime import datetime
 
 import feedparser  # type: ignore
-from vid_db.rss import from_rss, to_rss
 from vid_db.models import Video
+from vid_db.rss import from_rss, to_rss
 
 URL = "http://localhost"
 
@@ -51,7 +51,7 @@ class RssTester(unittest.TestCase):
         )
         self.assertEqual("test description", entry.description)
         self.assertEqual("100", entry.views)
-        self.assertEqual("60", entry.duration)
+        self.assertEqual("60.0", entry.duration)
         self.assertEqual("rumble.com", entry.host)
         self.assertIn(URL, entry.url)
         self.assertIn(URL, entry.iframe)

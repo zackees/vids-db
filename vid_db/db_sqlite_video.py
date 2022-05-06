@@ -97,8 +97,9 @@ class DbSqliteVideo:
         for vid in vids:
             # Convert datetime to unix timestamp
             timestamp_published = int(vid.date_published.timestamp())
-            data = vid.to_dict()
-            json_data = json.dumps(data, ensure_ascii=False)
+            # data = vid.dict()
+            # json_data = json.dumps(data, ensure_ascii=False)
+            json_data = vid.to_json_str()
             record = (
                 vid.url,
                 vid.channel_name,
@@ -117,7 +118,7 @@ class DbSqliteVideo:
             cursor = conn.execute(select_stmt, (channel_name,))
             for row in cursor:
                 output.append(row[0])
-        return [Video.from_dict(json.loads(s)) for s in output]
+        return [Video(**json.loads(s)) for s in output]
 
     def find_videos_by_urls(self, urls: List[str]) -> List[Video]:
         outlist: List[Video] = []
@@ -127,7 +128,7 @@ class DbSqliteVideo:
                 cursor = conn.execute(select_stmt, (url,))
                 for row in cursor:
                     data: Dict = json.loads(row[0])
-                    out: Video = Video.from_dict(data)
+                    out: Video = Video(**data)
                     outlist.append(out)
                     break
         return outlist
@@ -169,7 +170,7 @@ class DbSqliteVideo:
         for row in all_rows:
             json_data = row[0]
             data = json.loads(json_data)
-            vid = Video.from_dict(data)
+            vid = Video(**data)
             output.append(vid)
         return output
 
@@ -180,7 +181,7 @@ class DbSqliteVideo:
             cursor = conn.execute(select_stmt)
             for row in cursor:
                 output.append(row[0])
-        return [Video.from_json_str(s) for s in output]
+        return [Video(**json.loads(s)) for s in output]
 
     def to_data(self) -> List[Any]:
         out = []

@@ -9,13 +9,13 @@ import unittest
 from typing import Any
 
 from vid_db.date import iso_fmt, now_local
-from vid_db.models import Video, check_duration
+from vid_db.models import Video, parse_duration
 
 
 def valid_duration(duration: str) -> bool:
     """Returns true if checking the duration doesn't raise an error"""
     try:
-        check_duration(duration)
+        parse_duration(duration)
         return True
     except ValueError:
         return False
@@ -41,6 +41,12 @@ class ModelsTester(unittest.TestCase):
         self.assertFalse(
             valid_duration(
                 "60:01"  # With a colon, the minutes can't be 60 or higher
+            )
+        )
+
+        self.assertTrue(
+            valid_duration(
+                "23:24:01.34"  # With a colon, the minutes can't be 60 or higher
             )
         )
 
@@ -88,9 +94,6 @@ class ModelsTester(unittest.TestCase):
         # This should raise an exception.
         with self.assertRaises(ValueError):
             Video(**bad_vid)
-        # This should also raise an exception since it's the same code path
-        with self.assertRaises(ValueError):
-            Video.from_dict(bad_vid)
 
 
 if __name__ == "__main__":

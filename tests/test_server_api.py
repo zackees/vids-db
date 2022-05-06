@@ -11,13 +11,13 @@ import unittest
 from datetime import datetime
 
 import requests  # type: ignore
+from vid_db.models import Video
 from vid_db.testing.run_server_in_thread import (  # type: ignore
     HOST,
     PORT,
     run_server_in_thread,
 )
 from vid_db.version import VERSION
-from vid_db.models import Video
 
 # In our testing environment we use the same database for all tests.
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -66,7 +66,7 @@ class ApiServerTester(unittest.TestCase):
         with run_server_in_thread():
             time.sleep(1)
             vid = make_vid("test_channel", "test_title")
-            r = requests.put(f"{URL}/put/video", json=vid.to_dict())
+            r = requests.put(f"{URL}/put/video", json=vid.to_json())
             r.raise_for_status()
             r = requests.get(f"{URL}/rss/all?hours_ago=24")
             r.raise_for_status()
