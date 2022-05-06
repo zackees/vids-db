@@ -6,3 +6,4 @@ python-dateutil
 pydantic
 feedparser
 Whoosh
+pytz
