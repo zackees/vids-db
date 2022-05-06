@@ -6,10 +6,24 @@ from __future__ import annotations
 import json
 from datetime import datetime, timedelta
 from typing import Any, Dict, List, Optional, Set
+from urllib.parse import urlparse
 
-from pydantic import BaseModel
+from pydantic import (
+    AnyUrl,
+    BaseModel,
+    ConstrainedStr,
+    NonNegativeInt,
+    validator,
+)
 
 from vid_db.date import iso_fmt, now_local, parse_datetime
+
+
+def check_url(url: str) -> None:
+    """
+    Checks that the url is in the format https://...
+    """
+    _ = urlparse(url)
 
 
 def check_duration(duration: str) -> None:
@@ -78,21 +92,40 @@ def check_duration(duration: str) -> None:
 
 
 class Video(BaseModel):
-    """In memory reporesentation of a video article."""
+    """Represents a video object."""
 
-    channel_name: str
-    title: str
+    channel_name: ConstrainedStr
+    title: ConstrainedStr
     date_published: datetime  # from the scraped website
     date_lastupdated: datetime
-    channel_url: str
-    source: str
-    url: str
-    duration: str  # units = seconds.
-    description: str
-    img_src: str
-    iframe_src: str
-    views: int
+    channel_url: AnyUrl
+    source: ConstrainedStr
+    url: AnyUrl
+    duration: str
+    description: ConstrainedStr
+    img_src: AnyUrl
+    iframe_src: ConstrainedStr
+    views: NonNegativeInt
     # rank: Optional[float] = None  # optional stdev rank.
+
+    @validator("duration")
+    def check_duration(cls, v):
+        check_duration(v)
+        return v
+
+    @validator("views")
+    def check_views(cls, v):
+        if v == "":
+            return v
+        if int(v) < 0:
+            raise ValueError(f"Invalid views: {v}")
+        return v
+
+    @validator("channel_name")
+    def check_channel_name(cls, v):
+        if not v:
+            raise ValueError(f"Invalid channel_name: {v}")
+        return v
 
     def to_dict(self) -> Dict:
         """Generates a dictionary representing this class instance."""
@@ -122,7 +155,6 @@ class Video(BaseModel):
     def from_dict(cls, data: Dict) -> Video:
         """Deserializes from dictionary back to VideoInfo"""
         views = parse_views(data["views"])
-        check_duration(data["duration"])
         return Video(
             channel_name=data["channel_name"],
             title=data["title"],

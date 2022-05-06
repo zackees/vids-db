@@ -14,18 +14,18 @@ from vid_db.db_sqlite_video import DbSqliteVideo
 from vid_db.models import Video
 
 
-def test_video_info(url: str = "vid_url0.html") -> Video:
+def test_video_info(url: str = "http://example.com/vid_url0.html") -> Video:
     """Construct a default video info object."""
     video = Video.from_dict(
         {
             "channel_name": "XXchannel_name",
-            "channel_url": "chann_url0.html",
+            "channel_url": "https://chann_url0.html",
             "date_published": "2021-02-09 15:22:46.162038-08:00",
             "date_lastupdated": "2021-02-09 15:22:46.162038-08:00",
             "duration": "60",
             "description": "",
             "iframe_src": "1",
-            "img_src": "",
+            "img_src": "http://img_src0.jpg",
             "profile_img_src": "",
             "source": "rumble.com",
             "title": "Vid0",
@@ -68,7 +68,7 @@ class DbSqliteVideoTester(unittest.TestCase):
         db = DbSqliteVideo(db_path)
         video_in: Video = test_video_info()
         db.insert_or_update([video_in])
-        video_in.url = "vid_url1.html"
+        video_in.url = "http://example.com/vid_url1.html"
         db.insert_or_update([video_in])
         videos: List[Video] = db.find_videos_by_channel_name(
             channel_name="XXchannel_name"
@@ -101,9 +101,14 @@ class DbSqliteVideoTester(unittest.TestCase):
         """Tests that two videos can be found by url."""
         db_path = self.create_tempfile_path()
         db = DbSqliteVideo(db_path)
-        vids = [test_video_info(url="a"), test_video_info(url="b")]
+        vids = [
+            test_video_info(url="http://example.com/a"),
+            test_video_info(url="http://example.com/b"),
+        ]
         db.insert_or_update(vids)
-        vids = db.find_videos_by_urls(["a", "b"])
+        vids = db.find_videos_by_urls(
+            ["http://example.com/a", "http://example.com/b"]
+        )
         self.assertEqual(2, len(vids))
 
     def test_find_video_by_date(self):
@@ -122,8 +127,8 @@ class DbSqliteVideoTester(unittest.TestCase):
         """Tests that a video can be found and limited by the number of returns."""
         db_path = self.create_tempfile_path()
         db = DbSqliteVideo(db_path)
-        video_0: Video = test_video_info("vid_url0.html")
-        video_1: Video = test_video_info("vid_url1.html")
+        video_0: Video = test_video_info("https://example.com/vid_url0.html")
+        video_1: Video = test_video_info("https://example.com/vid_url1.html")
         db.insert_or_update([video_0, video_1])
         date_start: datetime = video_0.date_published
         date_end: datetime = date_start + timedelta(seconds=1)
