@@ -10,8 +10,8 @@ import tempfile
 import unittest
 from datetime import datetime
 
-from vid_db.database import Database
-from vid_db.models import Video
+from vids_db.database import Database
+from vids_db.models import Video
 
 
 class DatabaseTester(unittest.TestCase):
@@ -67,7 +67,9 @@ class DatabaseTester(unittest.TestCase):
         )
         db.update(vid)
         result = db.query_video_list("RedPill78")
+        urls = [v["url"] for v in result]
         self.assertEqual(1, len(result))
+        self.assertEqual(1, len(urls))
 
 
 if __name__ == "__main__":

@@ -10,8 +10,8 @@ import unittest
 from datetime import datetime, timedelta
 from typing import List
 
-from vid_db.db_sqlite_video import DbSqliteVideo
-from vid_db.models import Video
+from vids_db.db_sqlite_video import DbSqliteVideo
+from vids_db.models import Video
 
 
 def test_video_info(url: str = "http://example.com/vid_url0.html") -> Video:

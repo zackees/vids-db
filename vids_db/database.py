@@ -3,9 +3,9 @@ import os
 from datetime import datetime
 from typing import List, Optional
 
-from vid_db.db_full_text_search import DbFullTextSearch
-from vid_db.db_sqlite_video import DbSqliteVideo  # type: ignore
-from vid_db.models import Video
+from vids_db.db_full_text_search import DbFullTextSearch
+from vids_db.db_sqlite_video import DbSqliteVideo  # type: ignore
+from vids_db.models import Video
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 PROJECT_ROOT = os.path.dirname(HERE)

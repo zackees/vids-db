@@ -7,7 +7,7 @@ from contextlib import contextmanager
 from datetime import datetime
 from typing import Any, Dict, List, Optional
 
-from vid_db.models import Video
+from vids_db.models import Video
 
 TABLE_NAME = "videos"
 

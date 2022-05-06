@@ -10,8 +10,8 @@ import tempfile
 import unittest
 from datetime import datetime
 
-from vid_db.db_full_text_search import DbFullTextSearch
-from vid_db.models import Video
+from vids_db.db_full_text_search import DbFullTextSearch
+from vids_db.models import Video
 
 
 class DbFullTextSearchTester(unittest.TestCase):

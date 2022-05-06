@@ -11,13 +11,13 @@ import unittest
 from datetime import datetime
 
 import requests  # type: ignore
-from vid_db.models import Video
-from vid_db.testing.run_server_in_thread import (  # type: ignore
+from vids_db.models import Video
+from vids_db.testing.run_server_in_thread import (  # type: ignore
     HOST,
     PORT,
     run_server_in_thread,
 )
-from vid_db.version import VERSION
+from vids_db.version import VERSION
 
 # In our testing environment we use the same database for all tests.
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -28,7 +28,7 @@ URL = f"http://{HOST}:{PORT}"
 if os.path.exists(TEST_DB):
     shutil.rmtree(TEST_DB, ignore_errors=True)
 
-os.environ.update({"VID_DB_FILE": TEST_DB})
+os.environ.update({"vids_db_FILE": TEST_DB})
 
 
 def make_vid(channel_name: str, title: str) -> Video:
@@ -50,11 +50,11 @@ def make_vid(channel_name: str, title: str) -> Video:
 
 
 class ApiServerTester(unittest.TestCase):
-    """Tester for the vid_db."""
+    """Tester for the vids_db."""
 
     # @unittest.skip("Skip for now")
     def test_platform_executable(self) -> None:
-        """Opens up the vid_db and tests that the version returned is correct."""
+        """Opens up the vids_db and tests that the version returned is correct."""
         with run_server_in_thread():
             time.sleep(1)
             version = requests.get(f"{URL}/version").text
@@ -62,7 +62,7 @@ class ApiServerTester(unittest.TestCase):
 
     # @unittest.skip("Skip for now")
     def test_platform_put_get(self) -> None:  # pylint: disable=no-self-use
-        """Opens up the vid_db and tests that the version returned is correct."""
+        """Opens up the vids_db and tests that the version returned is correct."""
         with run_server_in_thread():
             time.sleep(1)
             vid = make_vid("test_channel", "test_title")

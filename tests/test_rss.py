@@ -6,8 +6,8 @@ import unittest
 from datetime import datetime
 
 import feedparser  # type: ignore
-from vid_db.models import Video
-from vid_db.rss import from_rss, to_rss
+from vids_db.models import Video
+from vids_db.rss import from_rss, to_rss
 
 URL = "http://localhost"
 

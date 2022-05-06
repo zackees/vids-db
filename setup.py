@@ -11,9 +11,9 @@ from setuptools import Command, find_packages, setup
 # The directory containing this file
 HERE = os.path.dirname(__file__)
 
-NAME = "vid_db"
-DESCRIPTION = "Server running vid_db"
-URL = "https://github.com/zackees/vid_db"
+NAME = "vids-db"
+DESCRIPTION = "Server running vids_db"
+URL = "https://github.com/zackees/vids-db"
 EMAIL = "dont@email.me"
 AUTHOR = "Zach Vorhies"
 REQUIRES_PYTHON = ">=3.6.0"
@@ -28,12 +28,6 @@ with open(os.path.join(HERE, "requirements.txt"), encoding="utf-8", mode="rt") a
 
 
 def get_requirements():
-    """
-    Return requirements as list.
-
-    package1==1.0.3
-    package2==0.0.5
-    """
     with open(os.path.join(HERE, "requirements.txt"), encoding="utf-8", mode="rt") as f:
         packages = []
         for line in f:
@@ -50,7 +44,7 @@ def get_requirements():
 
 
 def get_version() -> str:
-    with open(os.path.join(HERE, "vid_db", "version.py"), encoding="utf-8", mode="rt") as fd:
+    with open(os.path.join(HERE, "vids_db", "version.py"), encoding="utf-8", mode="rt") as fd:
         for line in fd.readlines():
             if line.startswith("VERSION"):
                 VERSION = line.split("=")[1].strip().strip('"')
@@ -120,7 +114,7 @@ setup(
     install_requires=REQUIREMENTS,
     entry_points={
         "console_scripts": [
-            "vid_db = vid_db.cmd:main",
+            "vids_db = vids_db.cmd:main",
         ],
     },
     packages=find_packages(exclude=["tests", "*.tests", "*.tests.*", "tests.*"]),

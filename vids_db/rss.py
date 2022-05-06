@@ -6,8 +6,8 @@ from typing import List
 
 import feedparser  # type: ignore
 
-from vid_db.date import iso_fmt
-from vid_db.models import Video
+from vids_db.date import iso_fmt
+from vids_db.models import Video
 
 
 def _rss_item(vid_info: Video) -> str:

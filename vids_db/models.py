@@ -16,7 +16,7 @@ from pydantic import (
     validator,
 )
 
-from vid_db.date import now_local, parse_datetime
+from vids_db.date import now_local, parse_datetime
 
 
 def parse_duration(duration: str) -> float:

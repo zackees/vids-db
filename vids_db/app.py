@@ -18,17 +18,17 @@ from fastapi.responses import (
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel  # pylint: disable=no-name-in-module
 
-from vid_db.database import Database  # type: ignore
-from vid_db.rss import to_rss
+from vids_db.database import Database  # type: ignore
+from vids_db.rss import to_rss
 
-# from vid_db.database import Database
-from vid_db.version import VERSION
-from vid_db.models import Video
+# from vids_db.database import Database
+from vids_db.version import VERSION
+from vids_db.models import Video
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 
 executor = ThreadPoolExecutor(max_workers=8)
-VID_DB = Database()
+vids_db = Database()
 
 app = FastAPI()
 
@@ -102,11 +102,11 @@ async def api_query(query: Query) -> JSONResponse:
     if query.channel_names is None:
         query.channel_names = []
         out.extend(
-            VID_DB.get_video_list(query.start, query.end, None, query.limit)
+            vids_db.get_video_list(query.start, query.end, None, query.limit)
         )
     else:
         for channel_name in query.channel_names:
-            data = VID_DB.get_video_list(
+            data = vids_db.get_video_list(
                 query.start, query.end, channel_name, query.limit
             )
             out.extend(data)
@@ -121,7 +121,7 @@ async def api_rss_channel_feed(query: RssQuery) -> RssResponse:
     kwargs = {}
     if query.limit > 0:
         kwargs["limit"] = query.limit
-    out = VID_DB.get_video_list(start, now, query.channel_name, **kwargs)
+    out = vids_db.get_video_list(start, now, query.channel_name, **kwargs)
     return RssResponse(to_rss(out))
 
 
@@ -131,19 +131,19 @@ async def api_rss_all_feed(hours_ago: int) -> RssResponse:
     now = datetime.now()
     hours_ago = min(hours_ago, 48)
     start = now - timedelta(hours=hours_ago)
-    out = VID_DB.get_video_list(start, now)
+    out = vids_db.get_video_list(start, now)
     return RssResponse(to_rss(out))
 
 
 @app.put("/put/video")
 async def api_add_video(video: Video) -> JSONResponse:
     """Api endpoint for adding a snapshot."""
-    VID_DB.update(video)
+    vids_db.update(video)
     return JSONResponse({"ok": True})
 
 
 @app.put("/put/videos")
 async def api_add_videos(videos: List[Video]) -> JSONResponse:
     """Api endpoint for adding a snapshot."""
-    VID_DB.update_many(videos)
+    vids_db.update_many(videos)
     return JSONResponse({"ok": True})

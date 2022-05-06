@@ -8,8 +8,8 @@
 import unittest
 from typing import Any
 
-from vid_db.date import iso_fmt, now_local
-from vid_db.models import Video, parse_duration
+from vids_db.date import iso_fmt, now_local
+from vids_db.models import Video, parse_duration
 
 
 def valid_duration(duration: str) -> bool:

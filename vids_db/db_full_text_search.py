@@ -14,7 +14,7 @@ from whoosh.filedb.filestore import FileStorage  # type: ignore
 from whoosh.qparser import QueryParser  # type: ignore
 from whoosh.qparser.dateparse import DateParserPlugin  # type: ignore
 
-from vid_db.models import Video
+from vids_db.models import Video
 
 SCHEMA = fields.Schema(
     url=fields.ID(stored=True, unique=True, sortable=True),

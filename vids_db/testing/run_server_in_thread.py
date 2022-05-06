@@ -8,7 +8,7 @@ import time
 import uvicorn
 from uvicorn.config import Config
 
-APP_NAME = "vid_db.app:app"
+APP_NAME = "vids_db.app:app"
 HOST = "127.0.0.1"
 PORT = 4422  # Arbitrarily chosen.
 

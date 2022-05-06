@@ -1,4 +1,4 @@
 include requirements.txt
 include requirements.testing.txt
-include vid_db/www/index.html
-include vid_db/www/preview.jpg
+include vids_db/www/index.html
+include vids_db/www/preview.jpg
