@@ -7,14 +7,14 @@ from datetime import datetime
 
 import feedparser  # type: ignore
 from vid_db.rss import from_rss, to_rss
-from vid_db.video_info import VideoInfo
+from vid_db.models import Video
 
 URL = "http://localhost"
 
 
-def make_vid(channel_name: str, title: str) -> VideoInfo:
+def make_vid(channel_name: str, title: str) -> Video:
     """Generates a video with default values."""
-    return VideoInfo(
+    return Video(
         channel_name=channel_name,
         title=title,
         date_published=datetime.now(),

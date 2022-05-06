@@ -7,7 +7,7 @@ from contextlib import contextmanager
 from datetime import datetime
 from typing import Any, Dict, List, Optional
 
-from vid_db.video_info import VideoInfo
+from vid_db.models import Video
 
 TABLE_NAME = "videos"
 
@@ -83,7 +83,7 @@ class DbSqliteVideo:
         finally:
             conn.close()
 
-    def insert_or_update(self, vids: List[VideoInfo]) -> None:
+    def insert_or_update(self, vids: List[Video]) -> None:
         insert_stmt = [
             f"INSERT OR REPLACE INTO {TABLE_NAME} (",
             "    url,",
@@ -110,29 +110,29 @@ class DbSqliteVideo:
             conn.executemany(insert_stmt_cmd, records)
             conn.commit()
 
-    def find_videos_by_channel_name(self, channel_name: str) -> List[VideoInfo]:
+    def find_videos_by_channel_name(self, channel_name: str) -> List[Video]:
         select_stmt = f"SELECT data FROM {TABLE_NAME} WHERE channel_name=(?)"
         output: List[str] = []
         with self.open_db_for_read() as conn:
             cursor = conn.execute(select_stmt, (channel_name,))
             for row in cursor:
                 output.append(row[0])
-        return [VideoInfo.from_dict(json.loads(s)) for s in output]
+        return [Video.from_dict(json.loads(s)) for s in output]
 
-    def find_videos_by_urls(self, urls: List[str]) -> List[VideoInfo]:
-        outlist: List[VideoInfo] = []
+    def find_videos_by_urls(self, urls: List[str]) -> List[Video]:
+        outlist: List[Video] = []
         select_stmt = f"SELECT data FROM {TABLE_NAME} WHERE url=(?)"
         with self.open_db_for_read() as conn:
             for url in urls:
                 cursor = conn.execute(select_stmt, (url,))
                 for row in cursor:
                     data: Dict = json.loads(row[0])
-                    out: VideoInfo = VideoInfo.from_dict(data)
+                    out: Video = Video.from_dict(data)
                     outlist.append(out)
                     break
         return outlist
 
-    def find_video_by_url(self, url: str) -> Optional[VideoInfo]:
+    def find_video_by_url(self, url: str) -> Optional[Video]:
         vids = self.find_videos_by_urls([url])
         return vids[0] if vids else None
 
@@ -142,8 +142,8 @@ class DbSqliteVideo:
         date_end: datetime,
         channel_name: Optional[str] = None,
         limit_count: Optional[int] = None,
-    ) -> List[VideoInfo]:
-        output: List[VideoInfo] = []
+    ) -> List[Video]:
+        output: List[Video] = []
         from_time = int(date_start.timestamp())
         to_time = int(date_end.timestamp())
         if limit_count is not None:
@@ -169,18 +169,18 @@ class DbSqliteVideo:
         for row in all_rows:
             json_data = row[0]
             data = json.loads(json_data)
-            vid = VideoInfo.from_dict(data)
+            vid = Video.from_dict(data)
             output.append(vid)
         return output
 
-    def get_all_videos(self) -> List[VideoInfo]:
+    def get_all_videos(self) -> List[Video]:
         select_stmt = f"SELECT data FROM {TABLE_NAME}"
         output: List[str] = []
         with self.open_db_for_read() as conn:
             cursor = conn.execute(select_stmt)
             for row in cursor:
                 output.append(row[0])
-        return [VideoInfo.from_json_str(s) for s in output]
+        return [Video.from_json_str(s) for s in output]
 
     def to_data(self) -> List[Any]:
         out = []

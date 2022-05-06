@@ -11,7 +11,7 @@ import unittest
 from datetime import datetime
 
 from vid_db.db_full_text_search import DbFullTextSearch
-from vid_db.video_info import VideoInfo
+from vid_db.models import Video
 
 
 class DbFullTextSearchTester(unittest.TestCase):
@@ -29,7 +29,7 @@ class DbFullTextSearchTester(unittest.TestCase):
         """Test the full text search database."""
         db = DbFullTextSearch(index_path=self.tempdir)
         self.assertTrue(os.listdir(self.tempdir))
-        vid = VideoInfo(
+        vid = Video(
             channel_name="RedPill78",
             title="TheRedPill",
             date_published=datetime.now(),
@@ -54,7 +54,7 @@ class DbFullTextSearchTester(unittest.TestCase):
         """Test the full text search database."""
         db = DbFullTextSearch(index_path=self.tempdir)
         self.assertTrue(os.listdir(self.tempdir))
-        vid = VideoInfo(
+        vid = Video(
             channel_name="RedPill78",
             title="TheRedPill",
             date_published=datetime.now(),
@@ -82,7 +82,7 @@ class DbFullTextSearchTester(unittest.TestCase):
         """
         db = DbFullTextSearch(index_path=self.tempdir)
         self.assertTrue(os.listdir(self.tempdir))
-        vid = VideoInfo(
+        vid = Video(
             channel_name="RedPill78",
             title="TheRedPill",
             date_published=datetime.now(),
@@ -108,7 +108,7 @@ class DbFullTextSearchTester(unittest.TestCase):
         """
         db = DbFullTextSearch(index_path=self.tempdir)
         self.assertTrue(os.listdir(self.tempdir))
-        vid = VideoInfo(
+        vid = Video(
             channel_name="RedPill78",
             title="TheRedPill",
             date_published=datetime.now(),

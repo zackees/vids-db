@@ -12,7 +12,72 @@ from pydantic import BaseModel
 from vid_db.date import iso_fmt, now_local, parse_datetime
 
 
-class VideoInfo(BaseModel):
+def check_duration(duration: str) -> None:
+    """
+    Checks that the duration is in the format HH:MM:SS.
+    Other acceptable formats include SS.
+    Ok:
+      ""
+      "?"
+      06
+      6
+      60
+      61
+      23:24
+      23:24:01.34
+    Not Ok:
+      -7
+      61  # above 60 seconds
+      61:01 # above 60 minutes
+      25:24:01.34 # above 24 hours
+    """
+
+    def _raise() -> None:
+        raise ValueError(f"Invalid duration: {duration}")
+
+    if "" == duration or "?" == duration:
+        return
+    # Simple case
+    if ":" not in duration and "." not in duration:
+        try:
+            tmp = int(duration)
+            if tmp < 0:
+                _raise()
+            return
+        except ValueError:
+            _raise()
+    new_duration = duration
+    if "." in new_duration:
+        new_duration = new_duration.split(".")[0]
+    units = new_duration.split(":")
+    units.reverse()
+    if len(units) > 3 or len(units) < 1:
+        _raise()
+    if not units[0].isnumeric():
+        _raise()
+    tmp = int(units[0])
+    if tmp >= 60 or tmp < 0:
+        _raise()
+    if len(units) == 1:
+        return
+    if not units[1].isnumeric():
+        _raise()
+    tmp = int(units[1])
+    if tmp >= 60 or tmp < 0:
+        _raise()
+    if len(units) == 2:
+        return
+    if not units[2].isnumeric():
+        _raise()
+    tmp = int(units[2])
+    if tmp >= 24 or tmp < 0:
+        _raise()
+    if len(units) == 3:
+        return
+    _raise()
+
+
+class Video(BaseModel):
     """In memory reporesentation of a video article."""
 
     channel_name: str
@@ -48,17 +113,17 @@ class VideoInfo(BaseModel):
         return out
 
     @classmethod
-    def from_json_str(cls, data: str) -> VideoInfo:
+    def from_json_str(cls, data: str) -> Video:
         """Deserializes from dictionary json str back to VideoInfo"""
         d = json.loads(data)
-        return VideoInfo.from_dict(d)
+        return Video.from_dict(d)
 
     @classmethod
-    def from_dict(cls, data: Dict) -> VideoInfo:
+    def from_dict(cls, data: Dict) -> Video:
         """Deserializes from dictionary back to VideoInfo"""
         views = parse_views(data["views"])
-
-        return VideoInfo(
+        check_duration(data["duration"])
+        return Video(
             channel_name=data["channel_name"],
             title=data["title"],
             date_published=parse_datetime(data["date_published"]),
@@ -75,17 +140,17 @@ class VideoInfo(BaseModel):
         )
 
     @classmethod
-    def from_list_of_dicts(cls, data: List[Dict]) -> List[VideoInfo]:
-        out: List[VideoInfo] = []
+    def from_list_of_dicts(cls, data: List[Dict]) -> List[Video]:
+        out: List[Video] = []
         for datum in data:
-            vid = VideoInfo.from_dict(datum)
+            vid = Video.from_dict(datum)
             out.append(vid)
         return out
 
     @classmethod
-    def to_plain_list(cls, data: List[VideoInfo]) -> List[Dict]:
+    def to_plain_list(cls, data: List[Video]) -> List[Dict]:
         out = []
-        vid_info: VideoInfo
+        vid_info: Video
         for vid_info in data:
             d = vid_info.to_dict()
             out.append(d)
@@ -93,7 +158,7 @@ class VideoInfo(BaseModel):
 
     @classmethod
     def to_compact_csv(
-        cls, vid_list: List[VideoInfo], exclude_columns: Optional[Set[str]] = None
+        cls, vid_list: List[Video], exclude_columns: Optional[Set[str]] = None
     ) -> List[List]:
         """
         Generates a compact csv form of the data. The csv form consists of a header list, followed by N data

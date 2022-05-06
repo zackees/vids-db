@@ -11,7 +11,7 @@ import unittest
 from datetime import datetime
 
 from vid_db.database import Database
-from vid_db.video_info import VideoInfo
+from vid_db.models import Video
 
 
 class DatabaseTester(unittest.TestCase):
@@ -28,7 +28,7 @@ class DatabaseTester(unittest.TestCase):
     def test(self) -> None:
         """Test the full text search database."""
         db = Database(db_path=self.tempdir)
-        vid = VideoInfo(
+        vid = Video(
             channel_name="RedPill78",
             title="TheRedPill",
             date_published=datetime.now(),
@@ -51,7 +51,7 @@ class DatabaseTester(unittest.TestCase):
         """Test the full text search database."""
         db = Database(db_path=self.tempdir)
         self.assertTrue(os.listdir(self.tempdir))
-        vid = VideoInfo(
+        vid = Video(
             channel_name="RedPill78",
             title="",
             date_published=datetime.now(),

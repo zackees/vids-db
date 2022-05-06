@@ -5,27 +5,27 @@ from typing import List, Optional
 
 from vid_db.db_full_text_search import DbFullTextSearch
 from vid_db.db_sqlite_video import DbSqliteVideo  # type: ignore
-from vid_db.video_info import VideoInfo
+from vid_db.models import Video
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 PROJECT_ROOT = os.path.dirname(HERE)
 DB_PATH_DIR = os.path.join(PROJECT_ROOT, "data")
-os.makedirs(DB_PATH_DIR, exist_ok=True)
 
 
 class Database:
     def __init__(self, db_path: str = DB_PATH_DIR) -> None:
+        os.makedirs(db_path, exist_ok=True)
         self.db_path = db_path
         db_path_sqlite = os.path.join(db_path, "videos.sqlite")
         db_path_fts = os.path.join(db_path, "full_text_seach")
         self.db_sqlite = DbSqliteVideo(db_path_sqlite)
         self.db_full_text_search = DbFullTextSearch(db_path_fts)
 
-    def update_many(self, vids: List[VideoInfo]) -> None:  # type: ignore
+    def update_many(self, vids: List[Video]) -> None:  # type: ignore
         self.db_sqlite.insert_or_update(vids)
         self.db_full_text_search.add_videos(vids)
 
-    def update(self, vid: VideoInfo) -> None:
+    def update(self, vid: Video) -> None:
         self.update_many([vid])
 
     def get_video_list(
@@ -34,8 +34,8 @@ class Database:
         date_end: datetime,
         channel_name: Optional[str] = None,
         limit: Optional[int] = None,
-    ) -> List[VideoInfo]:
-        vid_list: List[VideoInfo] = self.db_sqlite.find_videos(
+    ) -> List[Video]:
+        vid_list: List[Video] = self.db_sqlite.find_videos(
             date_start, date_end, channel_name=channel_name, limit_count=limit
         )
         return vid_list

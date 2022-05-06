@@ -14,7 +14,7 @@ from whoosh.filedb.filestore import FileStorage  # type: ignore
 from whoosh.qparser import QueryParser  # type: ignore
 from whoosh.qparser.dateparse import DateParserPlugin  # type: ignore
 
-from vid_db.video_info import VideoInfo
+from vid_db.models import Video
 
 SCHEMA = fields.Schema(
     url=fields.ID(stored=True, unique=True, sortable=True),
@@ -27,7 +27,7 @@ SCHEMA = fields.Schema(
 )
 
 
-def _filter_out_duplicate_videos(videos: List[VideoInfo]) -> List[VideoInfo]:
+def _filter_out_duplicate_videos(videos: List[Video]) -> List[Video]:
     found_urls = set()
     filtered_videos = []
     for video in videos:
@@ -54,7 +54,7 @@ class DbFullTextSearch:
             os.makedirs(index_path, exist_ok=True)
             self.index = self.storage.create_index(SCHEMA)
 
-    def add_videos(self, videos: List[VideoInfo]) -> None:
+    def add_videos(self, videos: List[Video]) -> None:
         """Add videos to the database."""
         videos = _filter_out_duplicate_videos(videos)
         with self.index.writer() as writer:

@@ -23,7 +23,7 @@ from vid_db.rss import to_rss
 
 # from vid_db.database import Database
 from vid_db.version import VERSION
-from vid_db.video_info import VideoInfo
+from vid_db.models import Video
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 
@@ -98,7 +98,7 @@ async def api_version() -> PlainTextResponse:
 @app.post("/query")
 async def api_query(query: Query) -> JSONResponse:
     """Api endpoint for adding a video"""
-    out: List[VideoInfo] = []
+    out: List[Video] = []
     if query.channel_names is None:
         query.channel_names = []
         out.extend(
@@ -110,10 +110,10 @@ async def api_query(query: Query) -> JSONResponse:
                 query.start, query.end, channel_name, query.limit
             )
             out.extend(data)
-    return JSONResponse(VideoInfo.to_plain_list(out))
+    return JSONResponse(Video.to_plain_list(out))
 
 
-@app.post("/rss/", response_model=List[VideoInfo])
+@app.post("/rss/", response_model=List[Video])
 async def api_rss_channel_feed(query: RssQuery) -> RssResponse:
     """Api endpoint for adding a video"""
     now = datetime.now()
@@ -125,7 +125,7 @@ async def api_rss_channel_feed(query: RssQuery) -> RssResponse:
     return RssResponse(to_rss(out))
 
 
-@app.get("/rss/all", response_model=List[VideoInfo])
+@app.get("/rss/all", response_model=List[Video])
 async def api_rss_all_feed(hours_ago: int) -> RssResponse:
     """Api endpoint for adding a video"""
     now = datetime.now()
@@ -136,14 +136,14 @@ async def api_rss_all_feed(hours_ago: int) -> RssResponse:
 
 
 @app.put("/put/video")
-async def api_add_video(video: VideoInfo) -> JSONResponse:
+async def api_add_video(video: Video) -> JSONResponse:
     """Api endpoint for adding a snapshot."""
     VID_DB.update(video)
     return JSONResponse({"ok": True})
 
 
 @app.put("/put/videos")
-async def api_add_videos(videos: List[VideoInfo]) -> JSONResponse:
+async def api_add_videos(videos: List[Video]) -> JSONResponse:
     """Api endpoint for adding a snapshot."""
     VID_DB.update_many(videos)
     return JSONResponse({"ok": True})

@@ -7,10 +7,10 @@ from typing import List
 import feedparser  # type: ignore
 
 from vid_db.date import iso_fmt
-from vid_db.video_info import VideoInfo
+from vid_db.models import Video
 
 
-def _rss_item(vid_info: VideoInfo) -> str:
+def _rss_item(vid_info: Video) -> str:
     views = "0" if vid_info.views == "?" else vid_info.views
     return f"""
     <item>
@@ -30,7 +30,7 @@ def _rss_item(vid_info: VideoInfo) -> str:
 """
 
 
-def to_rss(vid_list: List[VideoInfo]) -> str:
+def to_rss(vid_list: List[Video]) -> str:
     """
     Returns a list of RSS items as a string.
     """
@@ -47,14 +47,14 @@ def to_rss(vid_list: List[VideoInfo]) -> str:
     return out
 
 
-def from_rss(rss_str: str) -> List[VideoInfo]:
+def from_rss(rss_str: str) -> List[Video]:
     """
     Returns a list of VideoInfo objects from an RSS stream.
     """
-    out: List[VideoInfo] = []
+    out: List[Video] = []
     parsed = feedparser.parse(rss_str)
     for entry in parsed.entries:
-        vid = VideoInfo(
+        vid = Video(
             channel_name=entry.channel_name,
             title=entry.title,
             date_published=iso_fmt(entry.published),

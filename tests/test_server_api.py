@@ -17,7 +17,7 @@ from vid_db.testing.run_server_in_thread import (  # type: ignore
     run_server_in_thread,
 )
 from vid_db.version import VERSION
-from vid_db.video_info import VideoInfo
+from vid_db.models import Video
 
 # In our testing environment we use the same database for all tests.
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -31,9 +31,9 @@ if os.path.exists(TEST_DB):
 os.environ.update({"VID_DB_FILE": TEST_DB})
 
 
-def make_vid(channel_name: str, title: str) -> VideoInfo:
+def make_vid(channel_name: str, title: str) -> Video:
     """Generates a video with default values."""
-    return VideoInfo(
+    return Video(
         channel_name=channel_name,
         title=title,
         date_published=datetime.now(),
