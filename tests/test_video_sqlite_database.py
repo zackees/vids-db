@@ -53,10 +53,8 @@ class DbSqliteVideoTester(unittest.TestCase):
 
     def create_tempfile_path(self) -> str:
         """Creates a temporary file that will be deleted when the test is complete."""
-        tmp_file = (
-            tempfile.NamedTemporaryFile(  # pylint: disable=consider-using-with
-                suffix=".sqlite3", delete=False
-            )
+        tmp_file = tempfile.NamedTemporaryFile(  # pylint: disable=consider-using-with
+            suffix=".sqlite3", delete=False
         )
         tmp_file.close()
         self.cleanup.append(lambda: os.remove(tmp_file.name))
@@ -106,9 +104,7 @@ class DbSqliteVideoTester(unittest.TestCase):
             test_video_info(url="http://example.com/b"),
         ]
         db.insert_or_update(vids)
-        vids = db.find_videos_by_urls(
-            ["http://example.com/a", "http://example.com/b"]
-        )
+        vids = db.find_videos_by_urls(["http://example.com/a", "http://example.com/b"])
         self.assertEqual(2, len(vids))
 
     def test_find_video_by_date(self):
@@ -132,9 +128,7 @@ class DbSqliteVideoTester(unittest.TestCase):
         db.insert_or_update([video_0, video_1])
         date_start: datetime = video_0.date_published
         date_end: datetime = date_start + timedelta(seconds=1)
-        found_vids: List[Video] = db.find_videos(
-            date_start, date_end, limit_count=1
-        )
+        found_vids: List[Video] = db.find_videos(date_start, date_end, limit_count=1)
         self.assertEqual(1, len(found_vids))
 
 

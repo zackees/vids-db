@@ -2,7 +2,7 @@
     Tests whoosh full text search
 """
 
-# pylint: disable=invalid-name,R0801
+# pylint: disable=invalid-name,R0801,line-too-long
 
 import os
 import shutil
@@ -124,6 +124,28 @@ class DbFullTextSearchTester(unittest.TestCase):
         )
         db.add_videos([vid, vid])
         out = db.title_search("Red")
+        self.assertEqual(1, len(out))
+
+    def test_bug(self) -> None:
+        """Tests bug where redpill would not match."""
+        db = DbFullTextSearch(index_path=self.tempdir)
+        vid = Video(
+            channel_name="Nicholas Veniamin",
+            title="Melissa Redpill Discusses Supreme Court To Overturn Abortion Law with Nicholas Veniamin",
+            date_published="2022-05-04T05:25:14+00:00",
+            date_discovered="2022-05-03T22:39:32.373630-07:00",
+            date_lastupdated="2022-05-06T19:40:42.227151-07:00",
+            channel_url="https://www.bitchute.com/channel/jcOs2EA1BUJH/",
+            source="bitchute.com",
+            url="https://www.bitchute.com/video/zmZMfRiguhuf",
+            duration="29:57",
+            description="",
+            img_src="https://static-3.bitchute.com/live/cover_images/jcOs2EA1BUJH/zmZMfRiguhuf_640x360.jpg",
+            iframe_src="https://www.bitchute.com/embed/zmZMfRiguhuf",
+            views="4958",
+        )
+        db.add_videos([vid])
+        out = db.title_search("RedPill")
         self.assertEqual(1, len(out))
 
 

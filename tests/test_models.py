@@ -35,14 +35,10 @@ class ModelsTester(unittest.TestCase):
             )
         )
         self.assertFalse(
-            valid_duration(
-                "59:60"  # With a colon, the seconds can't be 60 or higher
-            )
+            valid_duration("59:60")  # With a colon, the seconds can't be 60 or higher
         )
         self.assertFalse(
-            valid_duration(
-                "60:01"  # With a colon, the minutes can't be 60 or higher
-            )
+            valid_duration("60:01")  # With a colon, the minutes can't be 60 or higher
         )
 
         self.assertTrue(

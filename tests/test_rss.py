@@ -46,9 +46,7 @@ class RssTester(unittest.TestCase):
         entry = parsed.entries[0]
         self.assertEqual("test_channel", entry.channel_name)
         self.assertEqual("test_title", entry.title)
-        self.assertEqual(
-            "http://localhost/channel/test_channel", entry.channel_url
-        )
+        self.assertEqual("http://localhost/channel/test_channel", entry.channel_url)
         self.assertEqual("test description", entry.description)
         self.assertEqual("100", entry.views)
         self.assertEqual("60.0", entry.duration)

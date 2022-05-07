@@ -25,7 +25,7 @@ def convert(video_json: dict) -> Video:
     """
     views = video_json["views"]
     channel_url = video_json["channel_url"]
-    if views == "?" or views == "":
+    if views in ["?", ""]:
         views = 0
     else:
         views = int(views)

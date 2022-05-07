@@ -22,9 +22,10 @@ SCHEMA = fields.Schema(
         stored=True, chars=True, vector=True, analyzer=FancyAnalyzer()
     ),
     date=fields.DATETIME(stored=True, sortable=True),
-    title=fields.TEXT(
-        stored=True, chars=True, vector=True, analyzer=FancyAnalyzer()
-    ),
+    # title=fields.TEXT(
+    #    stored=True, chars=True, vector=True, analyzer=FancyAnalyzer()
+    # ),
+    title=fields.NGRAMWORDS(stored=True, minsize=3),
     views=fields.NUMERIC(stored=True, sortable=True, bits=64),
 )
 
