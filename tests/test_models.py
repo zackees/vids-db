@@ -7,7 +7,7 @@
 
 import unittest
 from datetime import datetime
-from typing import Any
+from typing import Any, Dict
 
 from vids_db.date import iso_fmt
 from vids_db.models import Video, parse_duration
@@ -35,10 +35,14 @@ class ModelsTester(unittest.TestCase):
             )
         )
         self.assertFalse(
-            valid_duration("59:60")  # With a colon, the seconds can't be 60 or higher
+            valid_duration(
+                "59:60"
+            )  # With a colon, the seconds can't be 60 or higher
         )
         self.assertFalse(
-            valid_duration("60:01")  # With a colon, the minutes can't be 60 or higher
+            valid_duration(
+                "60:01"
+            )  # With a colon, the minutes can't be 60 or higher
         )
 
         self.assertTrue(
@@ -67,7 +71,7 @@ class ModelsTester(unittest.TestCase):
 
         timestamp = iso_fmt(datetime.now())
 
-        good_vid: dict[str, Any] = {
+        good_vid: Dict[str, Any] = {
             "channel_name": "channel_name",
             "title": "title",
             "date_published": timestamp,
@@ -85,7 +89,7 @@ class ModelsTester(unittest.TestCase):
         # This should not raise an exception.
         Video(**good_vid)
 
-        bad_vid: dict[str, Any] = dict(good_vid)
+        bad_vid: Dict[str, Any] = dict(good_vid)
         bad_vid["duration"] = "59:60"  # Invalid seconds
 
         # This should raise an exception.
