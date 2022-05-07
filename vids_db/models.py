@@ -63,7 +63,7 @@ def parse_duration(duration: str) -> float:
     except ValueError:
         pass
 
-    if "" == duration or "?" == duration:
+    if "" == duration or "?" == duration or "Live" == duration:
         return 0
     # Simple case
     if ":" not in duration and "." not in duration:
