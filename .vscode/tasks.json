@@ -4,9 +4,9 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "Run Dev",
+            "label": "Tox",
             "type": "shell",
-            "command": "./run_dev.sh",
+            "command": "tox",
             "group": "build",
             "options": {
                 "cwd": "${workspaceRoot}"
