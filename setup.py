@@ -112,11 +112,6 @@ setup(
         "Environment :: Console",
     ],
     install_requires=REQUIREMENTS,
-    entry_points={
-        "console_scripts": [
-            "vids_db = vids_db.cmd:main",
-        ],
-    },
     packages=find_packages(exclude=["tests", "*.tests", "*.tests.*", "tests.*"]),
     package_data={},
     include_package_data=True,

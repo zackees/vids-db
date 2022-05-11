@@ -3,7 +3,7 @@
 """
 
 # pylint: disable=invalid-name,R0801,line-too-long
-
+import atexit
 import os
 import shutil
 import tempfile
@@ -20,10 +20,8 @@ class DbFullTextSearchTester(unittest.TestCase):
     def setUp(self) -> None:
         # Create a temporary directory
         self.tempdir = tempfile.mkdtemp()
-
-    def tearDown(self) -> None:
-        # Remove the temp file.
-        shutil.rmtree(self.tempdir)
+        clean_fcn = lambda: shutil.rmtree(self.tempdir, ignore_errors=True)
+        atexit.register(clean_fcn)
 
     def test_title_search(self) -> None:
         """Test the full text search database."""
