@@ -23,12 +23,16 @@ VERSION = None
 with open(os.path.join(HERE, "README.md"), encoding="utf-8", mode="rt") as fd:
     LONG_DESCRIPTION = fd.read()
 
-with open(os.path.join(HERE, "requirements.txt"), encoding="utf-8", mode="rt") as fd:
+with open(
+    os.path.join(HERE, "requirements.txt"), encoding="utf-8", mode="rt"
+) as fd:
     REQUIREMENTS = [line.strip() for line in fd.readlines() if line.strip()]
 
 
 def get_requirements():
-    with open(os.path.join(HERE, "requirements.txt"), encoding="utf-8", mode="rt") as f:
+    with open(
+        os.path.join(HERE, "requirements.txt"), encoding="utf-8", mode="rt"
+    ) as f:
         packages = []
         for line in f:
             line = line.strip()
@@ -44,7 +48,9 @@ def get_requirements():
 
 
 def get_version() -> str:
-    with open(os.path.join(HERE, "vids_db", "version.py"), encoding="utf-8", mode="rt") as fd:
+    with open(
+        os.path.join(HERE, "vids_db", "version.py"), encoding="utf-8", mode="rt"
+    ) as fd:
         for line in fd.readlines():
             if line.startswith("VERSION"):
                 VERSION = line.split("=")[1].strip().strip('"')
@@ -79,13 +85,14 @@ class UploadCommand(Command):
             pass
 
         self.status("Building Source and Wheel (universal) distribution…")
-        os.system('"{0}" setup.py sdist bdist_wheel --universal'.format(sys.executable))
+        os.system(f'"{sys.executable}" setup.py sdist bdist_wheel --universal')
 
         self.status("Uploading the package to PyPI via Twine…")
-        os.system("twine upload dist/*")
+        if 0 != os.system("twine upload dist/*"):
+            raise RuntimeError("Upload failed")
 
         self.status("Pushing git tags…")
-        os.system("git tag v{0}".format(VERSION))
+        os.system(f"git tag v{VERSION}")
         os.system("git push --tags")
 
         sys.exit()
@@ -112,7 +119,9 @@ setup(
         "Environment :: Console",
     ],
     install_requires=REQUIREMENTS,
-    packages=find_packages(exclude=["tests", "*.tests", "*.tests.*", "tests.*"]),
+    packages=find_packages(
+        exclude=["tests", "*.tests", "*.tests.*", "tests.*"]
+    ),
     package_data={},
     include_package_data=True,
     extras_require={
