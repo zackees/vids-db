@@ -13,7 +13,8 @@ DB_PATH_DIR = os.path.join(PROJECT_ROOT, "data")
 
 
 class Database:
-    def __init__(self, db_path: str = DB_PATH_DIR) -> None:
+    def __init__(self, db_path: Optional[str] = None) -> None:
+        db_path = db_path or DB_PATH_DIR
         os.makedirs(db_path, exist_ok=True)
         self.db_path = db_path
         db_path_sqlite = os.path.join(db_path, "videos.sqlite")
