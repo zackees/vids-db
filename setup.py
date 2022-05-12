@@ -85,15 +85,19 @@ class UploadCommand(Command):
             pass
 
         self.status("Building Source and Wheel (universal) distribution…")
-        os.system(f'"{sys.executable}" setup.py sdist bdist_wheel --universal')
+
+        def exe(cmd: str) -> None:
+            print(f"Executing:\n  {cmd}\n")
+            return os.system(cmd)
+
+        exe(f'"{sys.executable}" setup.py sdist bdist_wheel --universal')
 
         self.status("Uploading the package to PyPI via Twine…")
-        if 0 != os.system("twine upload dist/*"):
+        if 0 != exe("twine upload dist/*"):
             raise RuntimeError("Upload failed")
 
         self.status("Pushing git tags…")
-        os.system(f"git tag v{VERSION}")
-        os.system("git push --tags")
+        exe(f"git tag v{VERSION} && git push --tags")
 
         sys.exit()
 
