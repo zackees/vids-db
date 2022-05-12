@@ -22,6 +22,10 @@ class Database:
         self.db_sqlite = DbSqliteVideo(db_path_sqlite)
         self.db_full_text_search = DbFullTextSearch(db_path_fts)
 
+    def clear(self) -> None:
+        self.db_sqlite.clear()
+        self.db_full_text_search.clear()
+
     def update_many(self, vids: List[Video]) -> None:  # type: ignore
         self.db_sqlite.insert_or_update(vids)
         self.db_full_text_search.add_videos(vids)

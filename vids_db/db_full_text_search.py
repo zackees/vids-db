@@ -57,6 +57,11 @@ class DbFullTextSearch:
             os.makedirs(index_path, exist_ok=True)
             self.index = self.storage.create_index(SCHEMA)
 
+    def clear(self) -> None:  # pylint: disable=no-self-use
+        """Clear the database."""
+        # TODO: Implement this.  # pylint: disable=W0511
+        return
+
     def add_videos(self, videos: List[Video]) -> None:
         """Add videos to the database."""
         videos = _filter_out_duplicate_videos(videos)

@@ -50,6 +50,11 @@ class DbSqliteVideo:
             except sqlite3.ProgrammingError:
                 pass  # Table already created
 
+    def clear(self) -> None:
+        with self.open_db_for_write() as conn:
+            conn.execute(f"DELETE FROM {TABLE_NAME}")
+            conn.commit()
+
     @contextmanager
     def open_db_for_write(self):
         try:
