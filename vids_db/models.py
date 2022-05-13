@@ -16,7 +16,7 @@ from pydantic import (
     validator,
 )
 
-from vids_db.date import parse_datetime
+from vids_db.date import iso_fmt, parse_datetime
 
 
 def parse_duration(duration: str) -> float:
@@ -119,8 +119,15 @@ class Video(BaseModel):
 
     @validator("duration", pre=True)
     def check_duration(cls, v):
-        v = parse_duration(v)
-        return v
+        return parse_duration(v)
+
+    @validator("date_published", pre=True)
+    def check_date_published(cls, v):
+        return iso_fmt(v)
+
+    @validator("date_lastupdated", pre=True)
+    def check_date_lastupdated(cls, v):
+        return iso_fmt(v)
 
     @classmethod
     def from_list_of_dicts(cls, data: List[Dict]) -> List[Video]:
