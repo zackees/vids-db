@@ -14,3 +14,6 @@ Server for storing video information.
   * `cd vids_db`
   * `tox`
 
+# Version
+
+  * 1.0.5: Fixes issue where datestamp was too strict
