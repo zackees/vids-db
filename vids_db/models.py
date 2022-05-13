@@ -131,7 +131,7 @@ class Video(BaseModel):
 
     @validator("views", pre=True)
     def check_views(cls, v):
-        if v == "" or v == "?" or v == "Live":
+        if v == "" or v == "?":
             return 0
         try:
             return int(v)
