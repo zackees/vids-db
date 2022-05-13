@@ -154,6 +154,23 @@ class Video(BaseModel):
             out.append(vid.dict())
         return out
 
+    @classmethod
+    def parse_json(cls, data: str) -> List[dict]:
+        """
+        Parses a json string and returns a video object.
+        """
+        out: List[dict] = []
+        json_data = json.loads(data)
+        for json_video in json_data:
+            try:
+                vid = Video(**json_video)
+                out.append(vid.to_json())
+            except Exception as err:
+                print(
+                    f"{__file__}: Skipping {json_video.get('url')} because {err}"
+                )
+        return out
+
     def video_age_seconds(self, now_time: Optional[datetime] = None) -> float:
         """
         Returns the date published as a datetime object.
