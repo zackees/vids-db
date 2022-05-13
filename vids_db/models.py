@@ -103,8 +103,8 @@ def parse_duration(duration: str) -> float:
 class Video(BaseModel):
     """Represents a video object."""
 
-    channel_name: constr(min_length=4)  # type: ignore
-    title: constr(min_length=4)  # type: ignore
+    channel_name: constr(min_length=2)  # type: ignore
+    title: constr(min_length=2)  # type: ignore
     date_published: datetime  # from the scraped website
     date_lastupdated: datetime
     channel_url: AnyUrl
