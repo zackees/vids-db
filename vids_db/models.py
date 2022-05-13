@@ -157,7 +157,7 @@ class Video(BaseModel):
     @classmethod
     def parse_json(cls, data: str) -> List[dict]:
         """
-        Parses a json string and returns a video object.
+        Parses a string and returns a json representation that can be used in a request.
         """
         out: List[dict] = []
         json_data = json.loads(data)
