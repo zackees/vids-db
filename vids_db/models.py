@@ -5,7 +5,7 @@ from __future__ import annotations
 
 import json
 from datetime import datetime, timedelta
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Union
 
 from pydantic import (
     AnyUrl,
@@ -155,12 +155,18 @@ class Video(BaseModel):
         return out
 
     @classmethod
-    def parse_json(cls, data: str) -> List[dict]:
+    def parse_json(cls, data: Union[str, dict]) -> List[dict]:
         """
-        Parses a string and returns a json representation that can be used in a request.
+        Parses a string or json dict and returns a json dict representation
+        that can be used in a network request.
         """
         out: List[dict] = []
-        json_data = json.loads(data)
+        if isinstance(data, str):
+            json_data = json.loads(data)
+        else:
+            json_data = data
+        if "content" in json_data:  # This is the publishing format.
+            json_data = json_data["content"]
         for json_video in json_data:
             try:
                 vid = Video(**json_video)
