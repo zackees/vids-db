@@ -129,6 +129,15 @@ class Video(BaseModel):
     def check_date_lastupdated(cls, v):
         return iso_fmt(v)
 
+    @validator("views", pre=True)
+    def check_views(cls, v):
+        if v == "" or v == "?" or v == "Live":
+            return 0
+        try:
+            return int(v)
+        except ValueError:
+            return 0
+
     @classmethod
     def from_list_of_dicts(cls, data: List[Dict]) -> List[Video]:
         out: List[Video] = []
