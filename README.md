@@ -14,6 +14,11 @@ Server for storing video information.
   * `cd vids_db`
   * `tox`
 
+# Networking Requests
+
+  * Please see `Video.parse_json(...)` for generating a type safe input json that can
+    be used to insert videos into the database. See also vids-db-server.
+
 # Version
 
   * 1.0.9: parse_json now can take in a dict
