@@ -16,4 +16,5 @@ Server for storing video information.
 
 # Version
 
+  * 1.0.6: Relaxes channel name to allow "NTD"
   * 1.0.5: Fixes issue where datestamp was too strict
