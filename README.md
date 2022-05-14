@@ -21,6 +21,7 @@ Server for storing video information.
 
 # Version
 
+  * 1.1.0: vids-db now has full text search disabled by default (too processor intensive)
   * 1.0.9: parse_json now can take in a dict
   * 1.0.8: Adds parse_json
   * 1.0.7: Relaxes views

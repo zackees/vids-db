@@ -13,6 +13,8 @@ from datetime import datetime
 from vids_db.database import Database
 from vids_db.models import Video
 
+os.environ["FULL_TEXT_SEARCH_ENABLED"] = "1"
+
 
 class DatabaseTester(unittest.TestCase):
     """Tester for the Full Search Text Database"""
