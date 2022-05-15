@@ -125,6 +125,14 @@ class DbSqliteVideo:
                 output.append(row[0])
         return output
 
+    def remove_by_channel_name(self, channel_name: str) -> None:
+        with self.open_db_for_write() as conn:
+            conn.execute(
+                f"DELETE FROM {TABLE_NAME} WHERE channel_name=(?)",
+                (channel_name,),
+            )
+            conn.commit()
+
     def find_videos_by_channel_name(self, channel_name: str) -> List[Video]:
         select_stmt = f"SELECT data FROM {TABLE_NAME} WHERE channel_name=(?)"
         output: List[str] = []

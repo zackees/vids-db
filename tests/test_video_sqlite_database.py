@@ -147,6 +147,17 @@ class DbSqliteVideoTester(unittest.TestCase):
         channel_names = db.get_channel_names()
         self.assertEqual(1, len(channel_names))
 
+    def test_remove_by_channel_name(self):
+        """Tests that a video can be found and limited by the number of returns."""
+        db_path = self.create_tempfile_path()
+        db = DbSqliteVideo(db_path)
+        video_0: Video = test_video_info("https://example.com/vid_url0.html")
+        video_1: Video = test_video_info("https://example.com/vid_url1.html")
+        db.insert_or_update([video_0, video_1])
+        db.remove_by_channel_name("XXchannel_name")
+        channel_names = db.get_channel_names()
+        self.assertEqual(0, len(channel_names))
+
 
 if __name__ == "__main__":
     unittest.main()

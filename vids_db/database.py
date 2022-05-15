@@ -47,6 +47,9 @@ class Database:
     def get_channel_names(self) -> List[str]:
         return self.db_sqlite.get_channel_names()
 
+    def remove_by_channel_name(self, channel_name: str) -> None:
+        self.db_sqlite.remove_by_channel_name(channel_name)
+
     def get_video_list(
         self,
         date_start: datetime,
