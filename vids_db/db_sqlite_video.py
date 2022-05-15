@@ -24,6 +24,17 @@ CREATE_STMT: str = "\n".join(
     ]
 )
 
+INSERT_STMT = "\n".join(
+    [
+        f"INSERT OR REPLACE INTO {TABLE_NAME} (",
+        "    url,",
+        "    channel_name,",
+        "    timestamp_published,",
+        "    data",
+        ") VALUES (?, ?, ?, ?)",
+    ]
+)
+
 
 class DbSqliteVideo:
     """SQLite3 context manager"""
@@ -58,7 +69,9 @@ class DbSqliteVideo:
     @contextmanager
     def open_db_for_write(self):
         try:
-            conn = sqlite3.connect(self.db_path, check_same_thread=False, timeout=10)
+            conn = sqlite3.connect(
+                self.db_path, check_same_thread=False, timeout=10
+            )
         except sqlite3.OperationalError as e:
             raise OSError(
                 "Error while opening %s\nOriginal Error: %s" % (self.db_path, e)
@@ -74,7 +87,9 @@ class DbSqliteVideo:
     @contextmanager
     def open_db_for_read(self):
         try:
-            conn = sqlite3.connect(self.db_path, check_same_thread=False, timeout=10)
+            conn = sqlite3.connect(
+                self.db_path, check_same_thread=False, timeout=10
+            )
         except sqlite3.OperationalError as e:
             raise OSError(
                 "Error while opening %s\nOriginal Error: %s" % (self.db_path, e)
@@ -85,21 +100,10 @@ class DbSqliteVideo:
             conn.close()
 
     def insert_or_update(self, vids: List[Video]) -> None:
-        insert_stmt = [
-            f"INSERT OR REPLACE INTO {TABLE_NAME} (",
-            "    url,",
-            "    channel_name,",
-            "    timestamp_published,",
-            "    data",
-            ") VALUES (?, ?, ?, ?)",
-        ]
-        insert_stmt_cmd = "\n".join(insert_stmt)
         records = []
         for vid in vids:
             # Convert datetime to unix timestamp
             timestamp_published = int(vid.date_published.timestamp())
-            # data = vid.dict()
-            # json_data = json.dumps(data, ensure_ascii=False)
             json_data = vid.to_json_str()
             record = (
                 vid.url,
@@ -109,8 +113,17 @@ class DbSqliteVideo:
             )
             records.append(record)
         with self.open_db_for_write() as conn:
-            conn.executemany(insert_stmt_cmd, records)
+            conn.executemany(INSERT_STMT, records)
             conn.commit()
+
+    def get_channel_names(self) -> List[str]:
+        select_stmt = f"SELECT DISTINCT channel_name FROM {TABLE_NAME}"
+        output: List[str] = []
+        with self.open_db_for_read() as conn:
+            cursor = conn.execute(select_stmt)
+            for row in cursor:
+                output.append(row[0])
+        return output
 
     def find_videos_by_channel_name(self, channel_name: str) -> List[Video]:
         select_stmt = f"SELECT data FROM {TABLE_NAME} WHERE channel_name=(?)"

@@ -44,6 +44,9 @@ class Database:
     def update(self, vid: Video) -> None:
         self.update_many([vid])
 
+    def get_distinct_channel_names(self) -> List[str]:
+        return self.db_sqlite.get_distinct_channel_names()
+
     def get_video_list(
         self,
         date_start: datetime,
