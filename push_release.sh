@@ -1,0 +1,1 @@
+python setup.py push_release
