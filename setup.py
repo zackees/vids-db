@@ -91,14 +91,43 @@ class UploadCommand(Command):
             return os.system(cmd)
 
         exe(f'"{sys.executable}" setup.py sdist bdist_wheel --universal')
-
         self.status("Uploading the package to PyPI via Twine…")
         if 0 != exe("twine upload dist/*"):
             raise RuntimeError("Upload failed")
+        self.status("Pushing git tags…")
+        exe(f"git tag v{VERSION} && git push --tags")
+        sys.exit()
+
+
+class UpdateRelease(Command):
+    """Support setup.py upload."""
+
+    description = "Build and publish the package."
+    user_options = []
+
+    @staticmethod
+    def status(s):
+        pass
+
+    def initialize_options(self):
+        pass
+
+    def finalize_options(self):
+        pass
+
+    def run(self):
+        try:
+            self.status("Removing previous builds…")
+            rmtree(os.path.join(HERE, "dist"))
+        except OSError:
+            pass
+
+        def exe(cmd: str) -> None:
+            print(f"Executing:\n  {cmd}\n")
+            return os.system(cmd)
 
         self.status("Pushing git tags…")
         exe(f"git tag v{VERSION} && git push --tags")
-
         sys.exit()
 
 
@@ -133,5 +162,6 @@ setup(
     },
     cmdclass={
         "upload": UploadCommand,
+        "update_release": UpdateRelease,
     },
 )
