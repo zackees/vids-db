@@ -2,7 +2,7 @@
 Just prints the environment
 """
 
-# pylint: disable=invalid-name,R0801
+# pylint: disable=invalid-name,R0801,R0201
 
 
 import os
