@@ -25,7 +25,4 @@ jobs:
     - name: pip install tox
       run: pip install tox
     - name: Run lint and then tests
-      env:
-        TWINE_USERNAME: __token__
-        TWINE_PASSWORD: ${{ secrets.TWINE_PASSWORD }}
       run: tox

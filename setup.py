@@ -94,12 +94,10 @@ class UploadCommand(Command):
         self.status("Uploading the package to PyPI via Twine…")
         if 0 != exe("twine upload dist/*"):
             raise RuntimeError("Upload failed")
-        self.status("Pushing git tags…")
-        exe(f"git tag v{VERSION} && git push --tags")
         sys.exit()
 
 
-class UpdateRelease(Command):
+class PushRelease(Command):
     """Support setup.py upload."""
 
     description = "Build and publish the package."
@@ -159,6 +157,6 @@ setup(
     include_package_data=True,
     cmdclass={
         "upload": UploadCommand,
-        "update_release": UpdateRelease,
+        "push_release": PushRelease,
     },
 )
