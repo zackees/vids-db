@@ -11,7 +11,9 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 PROJECT_ROOT = os.path.dirname(HERE)
 DB_PATH_DIR = os.path.join(PROJECT_ROOT, "data")
 
-FULL_TEXT_SEARCH_ENABLED = os.environ.get("FULL_TEXT_SEARCH_ENABLED", "0") == "1"
+FULL_TEXT_SEARCH_ENABLED = (
+    os.environ.get("FULL_TEXT_SEARCH_ENABLED", "0") == "1"
+)
 
 
 class Database:
@@ -19,9 +21,13 @@ class Database:
         db_path = db_path or DB_PATH_DIR
         os.makedirs(db_path, exist_ok=True)
         self.db_path = db_path
-        db_path_sqlite = os.path.join(db_path, "videos.sqlite")
+        # Remove.
+        db_path_sqlite = os.path.join(db_path, "videos2.sqlite")
+        os.remove(os.path.join(db_path, "videos.sqlite"), ignore_errors=True)
         self.db_full_text_search = None
-        full_text_enabled = os.environ.get("FULL_TEXT_SEARCH_ENABLED", "0") == "1"
+        full_text_enabled = (
+            os.environ.get("FULL_TEXT_SEARCH_ENABLED", "0") == "1"
+        )
         if full_text_enabled:
             db_path_fts = os.path.join(db_path, "full_text_seach")
             self.db_full_text_search = DbFullTextSearch(db_path_fts)

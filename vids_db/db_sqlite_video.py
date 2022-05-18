@@ -20,7 +20,7 @@ CREATE_STMT: str = "\n".join(
         "   timestamp_published INT,",
         "   data TEXT);",
         f"CREATE INDEX index_channel_name ON {TABLE_NAME}(channel_name);",
-        f"CREATE INDEX timestamp_published ON {TABLE_NAME}(channel_name);",
+        f"CREATE INDEX timestamp_published ON {TABLE_NAME}(timestamp_published);",
     ]
 )
 
@@ -172,16 +172,6 @@ class DbSqliteVideo:
             out: Video = Video(**data)
             outlist.append(out)
         return outlist
-
-        # with self.open_db_for_read() as conn:
-        #     for url in urls:
-        #         cursor = conn.execute(select_stmt, (url,))
-        #         for row in cursor:
-        #             data: Dict = json.loads(row[0])
-        #             out: Video = Video(**data)
-        #             outlist.append(out)
-        #             break
-        # return outlist
 
     def find_video_by_url(self, url: str) -> Optional[Video]:
         vids = self.find_videos_by_urls([url])
