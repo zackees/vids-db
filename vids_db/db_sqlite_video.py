@@ -46,6 +46,7 @@ class DbSqliteVideo:
         if self.db_path == "" or self.db_path == ":memory:":
             raise ValueError("Can not use in memory database for DbSqliteVideo")
         self.create_table()
+        self.migrate()
 
     def create_table(self) -> None:
         with self.open_db_for_write() as conn:
@@ -66,10 +67,30 @@ class DbSqliteVideo:
             conn.execute(f"DELETE FROM {TABLE_NAME}")
             conn.commit()
 
+    def migrate(self) -> None:
+        """Migrates the database to the latest version."""
+        with self.open_db_for_write() as conn:
+            # Check to see if it's exists first of all.
+            cursor = conn.execute(f"SELECT * FROM {TABLE_NAME}")
+            all_records = cursor.fetchall()
+
+        out_record = []
+        for record in all_records:
+            json_data = json.loads(record[3])
+            json_data["date_lastupdated"] = json_data["date_published"]
+            datum = (record[0], record[1], record[2], json.dumps(json_data))
+            out_record.append(datum)
+
+        with self.open_db_for_write() as conn:
+            # Check to see if it's exists first of all.
+            cursor = conn.executemany(INSERT_STMT, out_record)
+
     @contextmanager
     def open_db_for_write(self):
         try:
-            conn = sqlite3.connect(self.db_path, check_same_thread=False, timeout=10)
+            conn = sqlite3.connect(
+                self.db_path, check_same_thread=False, timeout=10
+            )
         except sqlite3.OperationalError as e:
             raise OSError(
                 "Error while opening %s\nOriginal Error: %s" % (self.db_path, e)
@@ -85,7 +106,9 @@ class DbSqliteVideo:
     @contextmanager
     def open_db_for_read(self):
         try:
-            conn = sqlite3.connect(self.db_path, check_same_thread=False, timeout=10)
+            conn = sqlite3.connect(
+                self.db_path, check_same_thread=False, timeout=10
+            )
         except sqlite3.OperationalError as e:
             raise OSError(
                 "Error while opening %s\nOriginal Error: %s" % (self.db_path, e)

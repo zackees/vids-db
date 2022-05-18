@@ -158,6 +158,14 @@ class DbSqliteVideoTester(unittest.TestCase):
         channel_names = db.get_channel_names()
         self.assertEqual(0, len(channel_names))
 
+    def test_migrate(self):
+        """Tests that a video can be migrated"""
+        db_path = self.create_tempfile_path()
+        db = DbSqliteVideo(db_path)
+        video_0: Video = test_video_info("https://example.com/vid_url0.html")
+        db.insert_or_update([video_0])
+        db.migrate()
+
 
 if __name__ == "__main__":
     unittest.main()

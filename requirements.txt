@@ -3,3 +3,4 @@ python-dateutil
 pydantic
 Whoosh
 pytz
+types-pytz

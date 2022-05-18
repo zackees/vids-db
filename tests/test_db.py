@@ -90,7 +90,6 @@ class DatabaseTester(unittest.TestCase):
             views=1,
         )
         db.update(vid)
-
         db.remove_by_channel_name("RedPill78")
         channel_names = db.get_channel_names()
         self.assertEqual(0, len(channel_names))
