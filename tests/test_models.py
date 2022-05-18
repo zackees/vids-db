@@ -6,10 +6,9 @@
 
 
 import unittest
-from datetime import datetime
 from typing import Any, Dict
 
-from vids_db.date import iso_fmt
+from vids_db.date import iso_fmt, now_local
 from vids_db.models import Video, parse_duration
 
 
@@ -69,7 +68,7 @@ class ModelsTester(unittest.TestCase):
         for dur in bad_durations:
             self.assertFalse(valid_duration(dur), f"{dur} should be invalid")
 
-        timestamp = iso_fmt(datetime.now())
+        timestamp = iso_fmt(now_local())
 
         good_vid: Dict[str, Any] = {
             "channel_name": "channel_name",

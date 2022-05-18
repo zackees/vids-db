@@ -69,9 +69,7 @@ class DbSqliteVideo:
     @contextmanager
     def open_db_for_write(self):
         try:
-            conn = sqlite3.connect(
-                self.db_path, check_same_thread=False, timeout=10
-            )
+            conn = sqlite3.connect(self.db_path, check_same_thread=False, timeout=10)
         except sqlite3.OperationalError as e:
             raise OSError(
                 "Error while opening %s\nOriginal Error: %s" % (self.db_path, e)
@@ -87,9 +85,7 @@ class DbSqliteVideo:
     @contextmanager
     def open_db_for_read(self):
         try:
-            conn = sqlite3.connect(
-                self.db_path, check_same_thread=False, timeout=10
-            )
+            conn = sqlite3.connect(self.db_path, check_same_thread=False, timeout=10)
         except sqlite3.OperationalError as e:
             raise OSError(
                 "Error while opening %s\nOriginal Error: %s" % (self.db_path, e)

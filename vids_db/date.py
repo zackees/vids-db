@@ -8,6 +8,11 @@ import pytz  # type: ignore
 from dateutil.parser import parse
 
 
+def now_local() -> datetime:
+    """Timezone aware now."""
+    return datetime.now(tz=pytz.UTC)
+
+
 def _my_date_parse(date_string: str) -> datetime:
     try:
         return datetime.fromisoformat(date_string)

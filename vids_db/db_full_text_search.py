@@ -39,9 +39,7 @@ def _filter_out_duplicate_videos(videos: List[Video]) -> List[Video]:
         found_urls.add(video.url)
         filtered_videos.append(video)
     if len(filtered_videos) != len(videos):
-        print(
-            f"Filtered out {len(videos) - len(filtered_videos)} duplicate videos."
-        )
+        print(f"Filtered out {len(videos) - len(filtered_videos)} duplicate videos.")
     return filtered_videos
 
 

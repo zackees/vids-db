@@ -8,8 +8,8 @@ import os
 import shutil
 import tempfile
 import unittest
-from datetime import datetime
 
+from vids_db.date import now_local
 from vids_db.db_full_text_search import DbFullTextSearch
 from vids_db.models import Video
 
@@ -30,8 +30,8 @@ class DbFullTextSearchTester(unittest.TestCase):
         vid = Video(
             channel_name="RedPill78",
             title="TheRedPill",
-            date_published=datetime.now(),
-            date_lastupdated=datetime.now(),
+            date_published=now_local(),
+            date_lastupdated=now_local(),
             channel_url="https://www.youtube.com/channel/UC-9-kyTW8ZkZNDHQJ6FgpwQ",
             source="youtube",
             url="https://www.youtube.com/watch?v=dQw4w9WgXcQ",
@@ -55,8 +55,8 @@ class DbFullTextSearchTester(unittest.TestCase):
         vid = Video(
             channel_name="RedPill78",
             title="TheRedPill",
-            date_published=datetime.now(),
-            date_lastupdated=datetime.now(),
+            date_published=now_local(),
+            date_lastupdated=now_local(),
             channel_url="https://www.youtube.com/channel/UC-9-kyTW8ZkZNDHQJ6FgpwQ",
             source="youtube",
             url="https://www.youtube.com/watch?v=dQw4w9WgXcQ",
@@ -83,8 +83,8 @@ class DbFullTextSearchTester(unittest.TestCase):
         vid = Video(
             channel_name="RedPill78",
             title="TheRedPill",
-            date_published=datetime.now(),
-            date_lastupdated=datetime.now(),
+            date_published=now_local(),
+            date_lastupdated=now_local(),
             channel_url="https://www.youtube.com/channel/UC-9-kyTW8ZkZNDHQJ6FgpwQ",
             source="youtube",
             url="https://www.youtube.com/watch?v=dQw4w9WgXcQ",
@@ -109,8 +109,8 @@ class DbFullTextSearchTester(unittest.TestCase):
         vid = Video(
             channel_name="RedPill78",
             title="TheRedPill",
-            date_published=datetime.now(),
-            date_lastupdated=datetime.now(),
+            date_published=now_local(),
+            date_lastupdated=now_local(),
             channel_url="https://www.youtube.com/channel/UC-9-kyTW8ZkZNDHQJ6FgpwQ",
             source="youtube",
             url="https://www.youtube.com/watch?v=dQw4w9WgXcQ",

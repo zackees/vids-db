@@ -123,10 +123,14 @@ class Video(BaseModel):
 
     @validator("date_published", pre=True)
     def check_date_published(cls, v):
+        data = parse_datetime(f"{v}")
+        assert data.tzinfo, f"data {v} is time zone niave."
         return iso_fmt(v)
 
     @validator("date_lastupdated", pre=True)
     def check_date_lastupdated(cls, v):
+        data = parse_datetime(f"{v}")
+        assert data.tzinfo, f"data {v} is time zone niave."
         return iso_fmt(v)
 
     @validator("views", pre=True)
@@ -172,9 +176,7 @@ class Video(BaseModel):
                 vid = Video(**json_video)
                 out.append(vid.to_json())
             except Exception as err:
-                print(
-                    f"{__file__}: Skipping {json_video.get('url')} because {err}"
-                )
+                print(f"{__file__}: Skipping {json_video.get('url')} because {err}")
         return out
 
     def video_age_seconds(self, now_time: Optional[datetime] = None) -> float:
