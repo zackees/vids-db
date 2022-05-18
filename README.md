@@ -25,6 +25,7 @@ https://github.com/zackees/vids-db/actions/workflows/pypi-publish.yml
 
 # Version
 
+  * 1.1.5: Timezone niave datestamps are now rejected
   * 1.1.4: bulk get_by_url
   * 1.1.3: Adds remove by channel name, to allow deletion
   * 1.1.1: Implements get_channel_names() to find all distinct channel names
