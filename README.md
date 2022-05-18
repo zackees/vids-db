@@ -1,6 +1,6 @@
 # vids_db
 
-Server for storing video information.
+File based database to store video information. There is an experimental full text search engine.
 
 ## Platform Unit Tests
 
