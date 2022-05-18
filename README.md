@@ -13,7 +13,6 @@ For a front end to this database, please see `vids-db-server`
 [![Actions Status](https://github.com/zackees/vids-db/workflows/Ubuntu_Tests/badge.svg)](https://github.com/zackees/vids-db/actions/workflows/test_ubuntu.yml)
 [![Actions Status](https://github.com/zackees/vids-db/workflows/Pypi_Publish/badge.svg)](https://github.com/zackees/vids-db/actions/workflows/pypi-publish.yml)
 
-https://github.com/zackees/vids-db/actions/workflows/pypi-publish.yml
 
 # Api
 
