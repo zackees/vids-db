@@ -144,16 +144,26 @@ class DbSqliteVideo:
 
     def find_videos_by_urls(self, urls: List[str]) -> List[Video]:
         outlist: List[Video] = []
-        select_stmt = f"SELECT data FROM {TABLE_NAME} WHERE url=(?)"
+        urls = [str(url) for url in urls]
+        select_stmt = f"""SELECT data FROM {TABLE_NAME} WHERE url IN ({",".join(["?"] * len(urls))});"""
         with self.open_db_for_read() as conn:
-            for url in urls:
-                cursor = conn.execute(select_stmt, (url,))
-                for row in cursor:
-                    data: Dict = json.loads(row[0])
-                    out: Video = Video(**data)
-                    outlist.append(out)
-                    break
+            cursor = conn.execute(select_stmt, urls)
+            vals = cursor.fetchall()
+        for row in vals:
+            data: Dict = json.loads(row[0])
+            out: Video = Video(**data)
+            outlist.append(out)
         return outlist
+
+        # with self.open_db_for_read() as conn:
+        #     for url in urls:
+        #         cursor = conn.execute(select_stmt, (url,))
+        #         for row in cursor:
+        #             data: Dict = json.loads(row[0])
+        #             out: Video = Video(**data)
+        #             outlist.append(out)
+        #             break
+        # return outlist
 
     def find_video_by_url(self, url: str) -> Optional[Video]:
         vids = self.find_videos_by_urls([url])
