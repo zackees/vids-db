@@ -38,6 +38,7 @@ print(vids)
 
 # Version
 
+  * 1.2.0: Fixes index. Old databases are abandonded after this update.
   * 1.1.6: Adds migration on startup to fix niave datestamps.
   * 1.1.5: Timezone niave datestamps are now rejected
   * 1.1.4: bulk get_by_url
