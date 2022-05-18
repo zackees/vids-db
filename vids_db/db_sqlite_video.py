@@ -46,7 +46,6 @@ class DbSqliteVideo:
         if self.db_path == "" or self.db_path == ":memory:":
             raise ValueError("Can not use in memory database for DbSqliteVideo")
         self.create_table()
-        self.migrate()
 
     def create_table(self) -> None:
         with self.open_db_for_write() as conn:
