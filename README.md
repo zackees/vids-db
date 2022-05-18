@@ -2,6 +2,11 @@
 
 File based database to store video information. There is an experimental full text search engine.
 
+This database provides efficient searches for a variaty of differerent common search patterns, like all videos in a channel, or all videos for everyone in the last
+4 hours.
+
+For a front end to this database, please see `vids-db-server`
+
 ## Platform Unit Tests
 
 [![Actions Status](https://github.com/zackees/vids-db/workflows/MacOS_Tests/badge.svg)](https://github.com/zackees/vids-db/actions/workflows/test_macos.yml)
