@@ -30,6 +30,7 @@ https://github.com/zackees/vids-db/actions/workflows/pypi-publish.yml
 
 # Version
 
+  * 1.1.6: Adds migration on startup to fix niave datestamps.
   * 1.1.5: Timezone niave datestamps are now rejected
   * 1.1.4: bulk get_by_url
   * 1.1.3: Adds remove by channel name, to allow deletion
