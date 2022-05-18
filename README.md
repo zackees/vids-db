@@ -1,9 +1,8 @@
-# vids_db
+# vids-db
 
-File based database to store video information. There is an experimental full text search engine.
+File based database to store video information.
 
-This database provides efficient searches for a variaty of differerent common search patterns, like all videos in a channel, or all videos for everyone in the last
-4 hours.
+This database provides efficient searches for a variaty of differerent common search patterns, like all videos in a channel, or all videos for everyone in the last 4 hours.
 
 For a front end to this database, please see `vids-db-server`
 
@@ -14,8 +13,18 @@ For a front end to this database, please see `vids-db-server`
 [![Actions Status](https://github.com/zackees/vids-db/workflows/Ubuntu_Tests/badge.svg)](https://github.com/zackees/vids-db/actions/workflows/test_ubuntu.yml)
 [![Actions Status](https://github.com/zackees/vids-db/workflows/Pypi_Publish/badge.svg)](https://github.com/zackees/vids-db/actions/workflows/pypi-publish.yml)
 
-
 https://github.com/zackees/vids-db/actions/workflows/pypi-publish.yml
+
+# Api
+
+```
+from vids_db import Database, Video
+db = vids_db.Database("path/to/database")
+vid = Video(...)
+db.update(vid)
+vids = db.get_video_list(date_start=date_start, date_end=date_end)
+print(vids)
+```
 
 # Full Tests + linting
 
