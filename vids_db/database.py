@@ -21,10 +21,10 @@ class Database:
         db_path = db_path or DB_PATH_DIR
         os.makedirs(db_path, exist_ok=True)
         self.db_path = db_path
-        # Remove.
-        db_path_sqlite = os.path.join(db_path, "videos2.sqlite")
-        if os.path.exists(os.path.join(db_path, "videos.sqlite")):
-            os.remove(os.path.join(db_path, "videos.sqlite"))
+        db_path_sqlite = os.path.join(db_path, "videos.sqlite")
+        # Old database.
+        if os.path.exists(os.path.join(db_path, "videos2.sqlite")):
+            os.remove(os.path.join(db_path, "videos2.sqlite"))
         self.db_full_text_search = None
         full_text_enabled = (
             os.environ.get("FULL_TEXT_SEARCH_ENABLED", "0") == "1"

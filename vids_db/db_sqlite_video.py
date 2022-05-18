@@ -66,24 +66,6 @@ class DbSqliteVideo:
             conn.execute(f"DELETE FROM {TABLE_NAME}")
             conn.commit()
 
-    def migrate(self) -> None:
-        """Migrates the database to the latest version."""
-        with self.open_db_for_write() as conn:
-            # Check to see if it's exists first of all.
-            cursor = conn.execute(f"SELECT * FROM {TABLE_NAME}")
-            all_records = cursor.fetchall()
-
-        out_record = []
-        for record in all_records:
-            json_data = json.loads(record[3])
-            json_data["date_lastupdated"] = json_data["date_published"]
-            datum = (record[0], record[1], record[2], json.dumps(json_data))
-            out_record.append(datum)
-
-        with self.open_db_for_write() as conn:
-            # Check to see if it's exists first of all.
-            cursor = conn.executemany(INSERT_STMT, out_record)
-
     @contextmanager
     def open_db_for_write(self):
         try:
