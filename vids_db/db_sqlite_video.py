@@ -19,8 +19,8 @@ CREATE_STMT: str = "\n".join(
         "   channel_name TEXT,",
         "   timestamp_published INT,",
         "   data TEXT);",
-        f"CREATE INDEX index_channel_name ON {TABLE_NAME}(channel_name);",
-        f"CREATE INDEX timestamp_published ON {TABLE_NAME}(timestamp_published);",
+        f"CREATE INDEX idx_channel_name ON {TABLE_NAME}(channel_name);",
+        f"CREATE INDEX idx_timestamp_published ON {TABLE_NAME}(timestamp_published);",
     ]
 )
 
@@ -48,7 +48,7 @@ class DbSqliteVideo:
         self.create_table()
 
     def create_table(self) -> None:
-        with self.open_db_for_write() as conn:
+        with self.open_db_for_read() as conn:
             # Check to see if it's exists first of all.
             check_table_stmt = f"SELECT name FROM sqlite_master WHERE type='table' AND name='{TABLE_NAME}';"
             cursor = conn.execute(check_table_stmt)

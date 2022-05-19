@@ -38,6 +38,7 @@ print(vids)
 
 # Version
 
+  * 1.2.2: Fix indexes.
   * 1.2.1: nit.
   * 1.2.0: Fixes index. Old databases are abandonded after this update.
   * 1.1.6: Adds migration on startup to fix niave datestamps.
