@@ -20,7 +20,10 @@ class DbFullTextSearchTester(unittest.TestCase):
     def setUp(self) -> None:
         # Create a temporary directory
         self.tempdir = tempfile.mkdtemp()
-        clean_fcn = lambda: shutil.rmtree(self.tempdir, ignore_errors=True)
+
+        def clean_fcn() -> None:
+            shutil.rmtree(self.tempdir, ignore_errors=True)
+
         atexit.register(clean_fcn)
 
     def test_title_search(self) -> None:

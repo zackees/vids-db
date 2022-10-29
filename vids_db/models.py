@@ -66,7 +66,9 @@ def parse_duration(duration: str) -> float:
     if "" == duration or "?" == duration or "Live" == duration:
         return 0
     # Simple case
-    if ":" not in duration and "." not in duration:
+    no_column = ":" not in duration
+    no_period = "." not in duration
+    if no_column and no_period:
         try:
             tmp = float(duration)
             if tmp < 0:
@@ -83,7 +85,7 @@ def parse_duration(duration: str) -> float:
     limit_multiplier = [
         (60, 1),
         (60, 60),
-        (24, 60 * 24),
+        (24, 60 * 60),
     ]
     for i, unit in enumerate(units):
         if i == 0:

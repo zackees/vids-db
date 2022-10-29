@@ -25,11 +25,11 @@ class ModelsTester(unittest.TestCase):
     """Tester for Models"""
 
     def test_duration(self) -> None:
+        """Tests the parsing of the duration"""
         duration = "2:59:16"
         expected_seconds = 10756
         duration_seconds = parse_duration(duration)
         self.assertEqual(duration_seconds, expected_seconds)
-
 
     def test_check_duration(self) -> None:
         """Test the full text search database."""
