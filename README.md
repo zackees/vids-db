@@ -38,6 +38,7 @@ print(vids)
 
 # Version
 
+  * 1.2.3: Fix duration parsing.
   * 1.2.2: Fix indexes.
   * 1.2.1: nit.
   * 1.2.0: Fixes index. Old databases are abandonded after this update.
