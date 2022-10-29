@@ -24,6 +24,13 @@ def valid_duration(duration: str) -> bool:
 class ModelsTester(unittest.TestCase):
     """Tester for Models"""
 
+    def test_duration(self) -> None:
+        duration = "2:59:16"
+        expected_seconds = 10756
+        duration_seconds = parse_duration(duration)
+        self.assertEqual(duration_seconds, expected_seconds)
+
+
     def test_check_duration(self) -> None:
         """Test the full text search database."""
         # Assert that the call does not throw an exception.
