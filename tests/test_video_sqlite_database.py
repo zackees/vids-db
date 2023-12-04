@@ -30,7 +30,7 @@ def test_video_info(url: str = "http://example.com/vid_url0.html") -> Video:
             "source": "rumble.com",
             "title": "Vid0",
             "url": url,
-            "views": "913",
+            "views": 913,
         }
     )
     return video

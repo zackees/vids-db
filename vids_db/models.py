@@ -109,12 +109,12 @@ class Video(BaseModel):
     title: constr(min_length=2)  # type: ignore
     date_published: datetime  # from the scraped website
     date_lastupdated: datetime
-    channel_url: AnyUrl
+    channel_url: str
     source: constr(min_length=4)  # type: ignore
-    url: AnyUrl
+    url: str
     duration: NonNegativeFloat
     description: str
-    img_src: AnyUrl
+    img_src: str
     iframe_src: str
     views: NonNegativeInt
     # rank: Optional[float] = None  # optional stdev rank.
@@ -178,7 +178,9 @@ class Video(BaseModel):
                 vid = Video(**json_video)
                 out.append(vid.to_json())
             except Exception as err:
-                print(f"{__file__}: Skipping {json_video.get('url')} because {err}")
+                print(
+                    f"{__file__}: Skipping {json_video.get('url')} because {err}"
+                )
         return out
 
     def video_age_seconds(self, now_time: Optional[datetime] = None) -> float:
@@ -193,9 +195,19 @@ class Video(BaseModel):
         """
         Returns a json representation of the video object.
         """
-        data = self.dict()
-        data["date_published"] = self.date_published.isoformat()
-        data["date_lastupdated"] = self.date_lastupdated.isoformat()
+        # data = self.model_dump()
+        # data["date_published"] = self.date_published.isoformat()
+        # data["date_lastupdated"] = self.date_lastupdated.isoformat()
+        # data["url"] = str(self.url)
+        # data["img_src"] = str(self.img_src)
+        data = {}
+        for key, val in self.model_dump().items():
+            if isinstance(val, datetime):
+                data[key] = val.isoformat()
+            elif isinstance(val, AnyUrl):
+                data[key] = str(val)
+            else:
+                data[key] = val
         return data
 
     def to_json_str(self) -> str:
