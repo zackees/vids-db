@@ -5,6 +5,12 @@
     "python.venvFolders": [
         "${workspaceFolder}/venv",
     ],
+    "terminal.integrated.defaultProfile.windows": "Git Bash",
+    "terminal.integrated.profiles.windows": {
+        "Git Bash": {
+            "path": "C:\\Program Files\\Git\\bin\\bash.exe"
+        }
+    },
     "python.terminal.activateEnvInCurrentTerminal": true,
     "python.defaultInterpreterPath": "${workspaceFolder}/venv/bin/python",
     "python.terminal.activateEnvironment": true,
