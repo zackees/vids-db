@@ -13,7 +13,7 @@ from pydantic import (
     NonNegativeFloat,
     NonNegativeInt,
     constr,
-    validator,
+    field_validator,
 )
 
 from vids_db.date import iso_fmt, parse_datetime
@@ -119,26 +119,33 @@ class Video(BaseModel):
     views: NonNegativeInt
     # rank: Optional[float] = None  # optional stdev rank.
 
-    @validator("duration", pre=True)
+    @field_validator("duration", mode="before")
+    @classmethod
     def check_duration(cls, v):
         return parse_duration(v)
 
-    @validator("date_published", pre=True)
+    @field_validator("date_published", mode="before")
+    @classmethod
     def check_date_published(cls, v):
         data = parse_datetime(f"{v}")
-        assert data.tzinfo, f"data {v} is time zone niave."
+        assert data.tzinfo, f"data {v} is time zone naive."
         return iso_fmt(v)
 
-    @validator("date_lastupdated", pre=True)
+    @field_validator("date_lastupdated", mode="before")
+    @classmethod
     def check_date_lastupdated(cls, v):
         data = parse_datetime(f"{v}")
-        assert data.tzinfo, f"data {v} is time zone niave."
+        assert data.tzinfo, f"data {v} is time zone naive."
         return iso_fmt(v)
 
-    @validator("views", pre=True)
+    @field_validator("views", mode="before")
+    @classmethod
     def check_views(cls, v):
         if v == "" or v == "?":
             return 0
+        if isinstance(v, str):
+            # Remove any non-digit characters (like commas)
+            v = ''.join(filter(str.isdigit, v))
         try:
             return int(v)
         except ValueError:
@@ -201,7 +208,8 @@ class Video(BaseModel):
         # data["url"] = str(self.url)
         # data["img_src"] = str(self.img_src)
         data = {}
-        for key, val in self.model_dump().items():
+        items = self.model_dump().items()
+        for key, val in items:
             if isinstance(val, datetime):
                 data[key] = val.isoformat()
             elif isinstance(val, AnyUrl):

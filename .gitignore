@@ -147,3 +147,7 @@ Thumbs.db
 
 # Local Netlify folder
 .netlify
+
+.aider*
+!.aider.conf.yml
+!.aiderignore
