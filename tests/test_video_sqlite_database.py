@@ -17,7 +17,7 @@ from vids_db.models import Video
 def make_video_info(url: str = "http://example.com/vid_url0.html") -> Video:
     """Construct a default video info object."""
     video = Video(
-        **{
+        **{  # type: ignore
             "channel_name": "XXchannel_name",
             "channel_url": "https://chann_url0.html",
             "date_published": "2021-02-09 15:22:46.162038-08:00",
@@ -39,11 +39,11 @@ def make_video_info(url: str = "http://example.com/vid_url0.html") -> Video:
 class DbSqliteVideoTester(unittest.TestCase):
     """Tests the functionality of the sqlite database"""
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
-        self.cleanup = []
+        self.cleanup: list = []
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         for cleanup in self.cleanup:
             try:
                 cleanup()
@@ -62,7 +62,7 @@ class DbSqliteVideoTester(unittest.TestCase):
         self.cleanup.append(lambda: os.remove(tmp_file.name))
         return os.path.abspath(tmp_file.name)
 
-    def test_add_video_info(self):
+    def test_add_video_info(self) -> None:
         """Adds a video info into the db then tests that it can be found."""
         db_path = self.create_tempfile_path()
         db = DbSqliteVideo(db_path)
@@ -75,7 +75,7 @@ class DbSqliteVideoTester(unittest.TestCase):
         )
         self.assertEqual(2, len(videos))
 
-    def test_add_update_video_info(self):
+    def test_add_update_video_info(self) -> None:
         """Tests that a video can be added and then updated."""
         db_path = self.create_tempfile_path()
         db = DbSqliteVideo(db_path)
@@ -88,7 +88,7 @@ class DbSqliteVideoTester(unittest.TestCase):
         vid_out: Video = db.find_video_by_url(video_in.url)  # type: ignore
         self.assertEqual(vid_out.views, 1000)
 
-    def test_find_video_by_url(self):
+    def test_find_video_by_url(self) -> None:
         """Tests that a video can be found by url."""
         db_path = self.create_tempfile_path()
         db = DbSqliteVideo(db_path)
@@ -97,7 +97,7 @@ class DbSqliteVideoTester(unittest.TestCase):
         vid = db.find_video_by_url(video_in.url)
         self.assertEqual(vid, video_in)
 
-    def test_find_vides_by_urls(self):
+    def test_find_vides_by_urls(self) -> None:
         """Tests that two videos can be found by url."""
         db_path = self.create_tempfile_path()
         db = DbSqliteVideo(db_path)
@@ -111,7 +111,7 @@ class DbSqliteVideoTester(unittest.TestCase):
         )
         self.assertEqual(2, len(vids))
 
-    def test_find_video_by_date(self):
+    def test_find_video_by_date(self) -> None:
         """Tests that a video can be found by date."""
         db_path = self.create_tempfile_path()
         db = DbSqliteVideo(db_path)
@@ -123,7 +123,7 @@ class DbSqliteVideoTester(unittest.TestCase):
         self.assertEqual(1, len(found_vids))
         self.assertEqual(found_vids[0], video_in)
 
-    def test_find_video_with_limit(self):
+    def test_find_video_with_limit(self) -> None:
         """Tests that a video can be found and limited by the number of returns."""
         db_path = self.create_tempfile_path()
         db = DbSqliteVideo(db_path)
@@ -137,7 +137,7 @@ class DbSqliteVideoTester(unittest.TestCase):
         )
         self.assertEqual(1, len(found_vids))
 
-    def test_get_channel_names(self):
+    def test_get_channel_names(self) -> None:
         """Tests that a video can be found and limited by the number of returns."""
         db_path = self.create_tempfile_path()
         db = DbSqliteVideo(db_path)
@@ -147,7 +147,7 @@ class DbSqliteVideoTester(unittest.TestCase):
         channel_names = db.get_channel_names()
         self.assertEqual(1, len(channel_names))
 
-    def test_remove_by_channel_name(self):
+    def test_remove_by_channel_name(self) -> None:
         """Tests that a video can be found and limited by the number of returns."""
         db_path = self.create_tempfile_path()
         db = DbSqliteVideo(db_path)

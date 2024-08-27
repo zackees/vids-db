@@ -38,7 +38,7 @@ class DatabaseTester(unittest.TestCase):
             channel_url="https://www.youtube.com/channel/UC-9-kyTW8ZkZNDHQJ6FgpwQ",
             source="youtube",
             url="https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-            duration="60",
+            duration="60",  # type: ignore
             description="A cool video",
             img_src="https://i.ytimg.com/vi/dQw4w9WgXcQ/hqdefault.jpg",
             iframe_src="https://www.youtube.com/embed/dQw4w9WgXcQ",
@@ -61,7 +61,7 @@ class DatabaseTester(unittest.TestCase):
             channel_url="https://www.youtube.com/channel/UC-9-kyTW8ZkZNDHQJ6FgpwQ",
             source="youtube",
             url="https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-            duration="60",
+            duration="60",  # type: ignore
             description="A cool video",
             img_src="https://i.ytimg.com/vi/dQw4w9WgXcQ/hqdefault.jpg",
             iframe_src="https://www.youtube.com/embed/dQw4w9WgXcQ",
@@ -83,7 +83,7 @@ class DatabaseTester(unittest.TestCase):
             channel_url="https://www.youtube.com/channel/UC-9-kyTW8ZkZNDHQJ6FgpwQ",
             source="youtube",
             url="https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-            duration="60",
+            duration="60",  # type: ignore
             description="A cool video",
             img_src="https://i.ytimg.com/vi/dQw4w9WgXcQ/hqdefault.jpg",
             iframe_src="https://www.youtube.com/embed/dQw4w9WgXcQ",

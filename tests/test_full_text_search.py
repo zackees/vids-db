@@ -38,7 +38,7 @@ class DbFullTextSearchTester(unittest.TestCase):
             channel_url="https://www.youtube.com/channel/UC-9-kyTW8ZkZNDHQJ6FgpwQ",
             source="youtube",
             url="https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-            duration="60",
+            duration="60",  # type: ignore
             description="A cool video",
             img_src="https://i.ytimg.com/vi/dQw4w9WgXcQ/hqdefault.jpg",
             iframe_src="https://www.youtube.com/embed/dQw4w9WgXcQ",
@@ -63,7 +63,7 @@ class DbFullTextSearchTester(unittest.TestCase):
             channel_url="https://www.youtube.com/channel/UC-9-kyTW8ZkZNDHQJ6FgpwQ",
             source="youtube",
             url="https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-            duration="60",
+            duration="60",  # type: ignore
             description="A cool video",
             img_src="https://i.ytimg.com/vi/dQw4w9WgXcQ/hqdefault.jpg",
             iframe_src="https://www.youtube.com/embed/dQw4w9WgXcQ",
@@ -91,7 +91,7 @@ class DbFullTextSearchTester(unittest.TestCase):
             channel_url="https://www.youtube.com/channel/UC-9-kyTW8ZkZNDHQJ6FgpwQ",
             source="youtube",
             url="https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-            duration="60",
+            duration="60",  # type: ignore
             description="A cool video",
             img_src="https://i.ytimg.com/vi/dQw4w9WgXcQ/hqdefault.jpg",
             iframe_src="https://www.youtube.com/embed/dQw4w9WgXcQ",
@@ -117,7 +117,7 @@ class DbFullTextSearchTester(unittest.TestCase):
             channel_url="https://www.youtube.com/channel/UC-9-kyTW8ZkZNDHQJ6FgpwQ",
             source="youtube",
             url="https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-            duration="60",
+            duration="60",  # type: ignore
             description="A cool video",
             img_src="https://i.ytimg.com/vi/dQw4w9WgXcQ/hqdefault.jpg",
             iframe_src="https://www.youtube.com/embed/dQw4w9WgXcQ",
@@ -133,17 +133,17 @@ class DbFullTextSearchTester(unittest.TestCase):
         vid = Video(
             channel_name="Nicholas Veniamin",
             title="Melissa Redpill Discusses Supreme Court To Overturn Abortion Law with Nicholas Veniamin",
-            date_published="2022-05-04T05:25:14+00:00",
-            date_discovered="2022-05-03T22:39:32.373630-07:00",
-            date_lastupdated="2022-05-06T19:40:42.227151-07:00",
+            date_published="2022-05-04T05:25:14+00:00",  # type: ignore
+            date_discovered="2022-05-03T22:39:32.373630-07:00",  # type: ignore
+            date_lastupdated="2022-05-06T19:40:42.227151-07:00",  # type: ignore
             channel_url="https://www.bitchute.com/channel/jcOs2EA1BUJH/",
             source="bitchute.com",
             url="https://www.bitchute.com/video/zmZMfRiguhuf",
-            duration="29:57",
+            duration="29:57",  # type: ignore
             description="",
             img_src="https://static-3.bitchute.com/live/cover_images/jcOs2EA1BUJH/zmZMfRiguhuf_640x360.jpg",
             iframe_src="https://www.bitchute.com/embed/zmZMfRiguhuf",
-            views="4958",
+            views="4958",  # type: ignore
         )
         db.add_videos([vid])
         out = db.title_search("RedPill")

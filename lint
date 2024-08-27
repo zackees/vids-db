@@ -1,0 +1,6 @@
+#!/bin/bash
+. ./activate
+
+flake8 vids_db tests
+pylint vids_db tests
+mypy vids_db tests
